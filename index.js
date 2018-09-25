@@ -2,6 +2,9 @@
 const mongoose = require('mongoose');
 const app = require('./app');
 const config = require('./config');
+const passport = require ('passport');
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 mongoose.connect(config.db, (err)=>{
