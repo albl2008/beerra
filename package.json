@@ -18,9 +18,8 @@
     "promise": "^8.0.2",
     "bcryptjs": "*",
     "cors": "*",
-    "jsonwebtoken":"*",
-    "passport":"*",
-    "passport-jwt":"*"
-
+    "jsonwebtoken": "*",
+    "passport": "*",
+    "passport-jwt": "*"
   }
 }

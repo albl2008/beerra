@@ -3,7 +3,7 @@ const Brewery = require('../Models/brewery')
 
 async function getkegs(req,res){
     try {
-        const Kegs = await Keg.find({}).populate('brewery')
+        const Kegs = await Keg.find({"status" : [ 0,1,2,5 ]}).populate('brewery')
 
         if(Object.keys(Kegs).length === 0)
             return res.status(404).send({message:'No hay barriles'}); 

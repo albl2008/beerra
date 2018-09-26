@@ -10,6 +10,7 @@ api.get('/',(req,res)=>{
 api.post('/signup',userCtrl.createUser);
 api.post('/login/:idUser',userCtrl.getUserById);
 api.post('/login',userCtrl.getEmail);
+//api.get('/profile',userCtrl.auth);
 
 
 module.exports = api;

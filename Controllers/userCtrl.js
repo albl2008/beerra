@@ -2,6 +2,7 @@ const User = require('../Models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const passport = require ('passport');
 
 async function getEmail(req,res){
     try{
@@ -33,6 +34,7 @@ async function getEmail(req,res){
         res.status(500).send(`Error al obtener el email ${err}`)
     }
 }
+
 
 async function getUserById(req,res){
     try{
