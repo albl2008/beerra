@@ -10,16 +10,19 @@
   "author": "Mariano Buglio",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "bcryptjs": "*",
     "body-parser": "^1.18.3",
+    "cors": "*",
     "express": "^4.16.3",
+    "jsonwebtoken": "*",
+    "jwt-simple": "^0.5.5",
+    "moment": "^2.22.2",
     "mongoose": "^5.2.16",
     "morgan": "^1.9.1",
     "nodemon": "^1.18.4",
-    "promise": "^8.0.2",
-    "bcryptjs": "*",
-    "cors": "*",
-    "jsonwebtoken": "*",
     "passport": "*",
-    "passport-jwt": "*"
+    "passport-jwt": "*",
+    "promise": "^8.0.2"
   }
 }
