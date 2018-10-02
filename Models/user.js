@@ -77,7 +77,7 @@ userSchema.methods = {
     return {
       _id: this._id,
       userName: this.userName,
-      token: `JWT ${this.createToken()}`,
+      token: `Bearer ${this.createToken()}`,
     };
   },
 };
