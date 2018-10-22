@@ -6,7 +6,7 @@ const kegSchema = new Schema({
    type : String,
    required: [true, 'Ingrese el estilo']
   },
-  quantity: String,
+  quantity: Number,
   status: Number,
   ibu: Number,
   alcohol: Number,
