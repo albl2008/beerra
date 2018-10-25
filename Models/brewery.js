@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const brewerySchema = new Schema({
   name: String,
   contact: [{
-    nameC: String,
+    name: String,
     tel: Number,
     mail: String
   }]
