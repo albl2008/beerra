@@ -50,7 +50,7 @@ function createBrewery(req,res){
     let brewery = new Brewery();
     brewery.name = req.body.name
     brewery.contact = req.body.contact
-    
+    brewery.address = req.body.address
     
     brewery.save()
         .then((breweryStoraged)=>{

@@ -15,6 +15,17 @@ async function getBottles(req,res){
    
    
 }
+async function getBottle(req,res){
+    try {
+        const bottle = await Bottle.findById(req.params.idBottle)
+    if(!bottle)
+        res.status(404).send({message:"No se encontro la botella "})
+    res.status(200).send({bottle})
+    } catch (error) {
+        res.status(500).send(`Error al buscar botella ${err}`)
+    }
+    
+}
 async function createBottle(req,res){
     
     try {
@@ -26,7 +37,7 @@ async function createBottle(req,res){
         bottle.ibu = req.body.ibu;
         bottle.alcohol = req.body.alcohol;
         bottle.brewery = req.body.brewery;
-    
+        bottle.price = req.body.price;
         const bottleStoraged = await bottle.save()
         res.status(200).send({bottle:bottleStoraged})
             
@@ -70,5 +81,6 @@ module.exports = {
     getBottles,
     createBottle,
     deleteBottle,
-    updateBottle
+    updateBottle,
+    getBottle
 }

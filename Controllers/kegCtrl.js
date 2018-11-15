@@ -1,14 +1,31 @@
 const Keg = require('../Models/keg');
 const Brewery = require('../Models/brewery')
+const Growler = require('../Models/growler')
+const Other = require('../Models/other')
+const Pint = require('../Models/pint')
 
 async function getkegs(req,res){
     try {
-        const Kegs = await Keg.find({"status" : [ 0,1,2,5 ]}).populate('brewery')
+        const Kegs = await Keg.find({"sta" : [ 1,2,3,4 ]}).populate('brewery')
 
         if(Object.keys(Kegs).length === 0)
             return res.status(404).send({message:'No hay barriles'}); 
 
         res.status(200).send({Kegs})     
+    } catch (err) {
+        res.status(500).send(`${err}`);
+    }
+   
+   
+}
+async function getkeg(req,res){
+    try {
+        const keg = await Keg.findById(req.params.idKeg).populate('brewery')
+
+        if(Object.keys(keg).length === 0)
+            return res.status(404).send({message:'No se encontro el barril seleccionado'}); 
+
+        res.status(200).send({keg})     
     } catch (err) {
         res.status(500).send(`${err}`);
     }
@@ -22,7 +39,8 @@ async function createKeg(req,res){
         let keg = new Keg();
         keg.beer = req.body.beer
         keg.quantity = req.body.quantity
-        keg.status = req.body.status
+        keg.quantitySaled = req.body.quantity
+        keg.sta = req.body.sta
         keg.ibu = req.body.ibu
         keg.alcohol = req.body.alcohol;
         keg.brewery = req.body.brewery;
@@ -37,16 +55,42 @@ async function createKeg(req,res){
 }
 async function deleteKeg(req,res){
     try {
+       let verify = await verifySale(req.params.idKeg)
+       console.log(verify)
+    if(verify){
         let idKeg = req.params.idKeg
         let keg = await Keg.findById(idKeg)
         if(!keg)
             res.status(404).send({mensaje:'El barril a eliminar no existe'})
          await keg.remove()
         res.status(200).send({mensaje:'barril eliminado correctamente'})
-
+        }else{
+            res.status(200).send({mensaje:'No es posible eliminar este barril ya que se han realizado ventas'})
+        }
     } catch (err) {
         res.status(500).send({mensaje:`Error al eliminar el barril ${err}`})
     }
+}
+async function verifySale(idKeg){
+    let growler = await Growler.find({keg: idKeg})
+    let pint = await Pint.find({keg:idKeg})
+    let other = await Other.find({keg:idKeg})
+    
+    if(Object.keys(growler).length != 0 ){
+        console.log("entreeeee 3")
+        return false
+    }
+    else if(Object.keys(pint).length != 0 ){
+        console.log("entreeeee 2")
+        return false
+    }
+    else if(Object.keys(other).length != 0 ){
+        console.log("entreeeee")
+        return false
+        
+    }    
+    else
+        return true
 }
 async function updateKeg(req, res){
 
@@ -66,9 +110,40 @@ async function updateKeg(req, res){
     }
   
 }
+async function connect(req,res){
+    try {
+        let idKeg = req.params.idKeg
+        let connectedKeg = await Keg.findByIdAndUpdate(idKeg, {$set:{sta:4 }},{new:true})
+        if(!connectedKeg)
+            res.status(404).send({mensaje: 'No se encontro el barril a conectar'})
+        res.status(200).send({
+            mensaje:'Barril conectado',
+            connectedKeg   
+    })
+    } catch (error) {
+        res.status(500).send(`Error al conectar barril ${error}`)
+    }
+}
+async function empty(req,res){
+    try {
+        let idKeg = req.params.idKeg
+        let disconect = await Keg.findByIdAndUpdate(idKeg, {$set:{sta:3 }},{new:true})
+        if(!disconect)
+            res.status(404).send({mensaje: 'No se encontro el barril a desconectar'})
+        res.status(200).send({
+            mensaje:'Barril desconectado',
+            disconect   
+    })
+    } catch (error) {
+        res.status(500).send(`Error al conectar barril ${error}`)
+    }
+}
 module.exports = {
     getkegs,
     createKeg,
     deleteKeg,
-    updateKeg
+    updateKeg,
+    getkeg,
+    connect,
+    empty
 }
