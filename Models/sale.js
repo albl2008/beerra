@@ -6,21 +6,25 @@ const saleSchema = new Schema({
     client: String,
     growlers:[{
        
-            type: Schema.Types.ObjectId,
-            ref:'growler'
+        type: Schema.Types.ObjectId,
+        ref:'growler'
         
     }],  
     pints:[{
        
-            type: Schema.Types.ObjectId,
-            ref:'pint'
+        type: Schema.Types.ObjectId,
+        ref:'pint'
         
     }],  
     bottles:[{
         
-            type: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref:'bottle'
         
+    }],
+    others:[{
+        type: Schema.Types.ObjectId,
+        ref:'other'
     }],
     date:Date,
     totalSale:Number,

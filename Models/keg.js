@@ -7,7 +7,8 @@ const kegSchema = new Schema({
    required: [true, 'Ingrese el estilo']
   },
   quantity: Number,
-  status: Number,
+  quantitySaled: Number,
+  sta: Number,
   ibu: Number,
   alcohol: Number,
   brewery: {
