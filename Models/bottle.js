@@ -6,7 +6,7 @@ const bottleSchema = new Schema({
    type : String,
    required: [true, 'Ingrese el estilo']
   },
-  quantity: Number,
+  stock: Number,
   size: Number,
   ibu: Number,
   alcohol: Number,

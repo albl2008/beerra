@@ -8,5 +8,6 @@ api.post('/',kegCtrl.createKeg);
 api.delete('/:idKeg',kegCtrl.deleteKeg);
 api.put('/:idKeg',kegCtrl.updateKeg)
 api.put('/connect/:idKeg/',kegCtrl.connect)
+api.put('/disconect/:idKeg/',kegCtrl.disconect)
 api.put('/empty/:idKeg/',kegCtrl.empty)
 module.exports = api;

@@ -17,9 +17,9 @@ const saleSchema = new Schema({
         
     }],  
     bottles:[{
-        
+       
         type: Schema.Types.ObjectId,
-        ref:'bottle'
+        ref:'bottleSale'
         
     }],
     others:[{

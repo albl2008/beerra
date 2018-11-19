@@ -4,6 +4,7 @@ const Pint = require('../Models/pint')
 const Other = require('../Models/other')
 const Keg = require('../Models/keg')
 const Bottle = require('../Models/bottle')
+const BottleSale = require('../Models/bottleSale')
 const format = require('date-format')
 
 async function createSale(req, res) {
@@ -61,7 +62,7 @@ async function getOther(req,res){
 }
 async function getBottle(req,res){
     try {
-        let bottles = await Sale.findById(req.params.idSale).populate('bottles').populate('brewery')
+        let bottles = await BottleSale.find({sale:req.params.idSale}).populate('bottle  ')
         if(!bottles)
             res.status(404).send({mensaje:"La venta no tiene botellas"})
         res.status(200).send({bottles})
@@ -110,9 +111,16 @@ async function saveProducts(growlers, bottles, pints,other, saleStoraged) {
     if (bottles) {
         for (const element of bottles) {
             let bottle = await Bottle.findById(element._id)
-            bottle.quantity -= element.quantity
+            bottle.stock -= element.quantitySaled
+            let bottleSale = new BottleSale()
+            bottleSale.bottle = element._id
+            bottleSale.sale = saleStoraged._id
+            bottleSale.quantitySaled = element.quantitySaled
+            bottleSale.unitPrice = element.unitPrice
+            bottleSale.totalPrice = element.price
             await bottle.save()
-            await saleStoraged.bottles.push(element)
+            await bottleSale.save()
+            await saleStoraged.bottles.push(bottleSale)
             await saleStoraged.save()
         }
     }

@@ -21,11 +21,15 @@ async function getkegs(req,res){
 async function getkeg(req,res){
     try {
         const keg = await Keg.findById(req.params.idKeg).populate('brewery')
-
+        
         if(Object.keys(keg).length === 0)
             return res.status(404).send({message:'No se encontro el barril seleccionado'}); 
+        const sale = await verifySale(keg._id)
 
-        res.status(200).send({keg})     
+        res.status(200).send({
+            keg,
+            sale: sale
+        })     
     } catch (err) {
         res.status(500).send(`${err}`);
     }
@@ -38,9 +42,12 @@ async function createKeg(req,res){
 
         let keg = new Keg();
         keg.beer = req.body.beer
-        keg.quantity = req.body.quantity
-        keg.quantitySaled = req.body.quantity
         keg.sta = req.body.sta
+        if(keg.sta === 2) 
+            keg.quantitySaled = req.body.quantitySaled 
+        else
+            keg.quantitySaled = req.body.quantity
+        keg.quantity = req.body.quantity
         keg.ibu = req.body.ibu
         keg.alcohol = req.body.alcohol;
         keg.brewery = req.body.brewery;
@@ -77,17 +84,13 @@ async function verifySale(idKeg){
     let other = await Other.find({keg:idKeg})
     
     if(Object.keys(growler).length != 0 ){
-        console.log("entreeeee 3")
         return false
     }
-    else if(Object.keys(pint).length != 0 ){
-        console.log("entreeeee 2")
+    else if(Object.keys(pint).length != 0 ){        
         return false
     }
-    else if(Object.keys(other).length != 0 ){
-        console.log("entreeeee")
-        return false
-        
+    else if(Object.keys(other).length != 0 ){      
+        return false       
     }    
     else
         return true
@@ -124,6 +127,27 @@ async function connect(req,res){
         res.status(500).send(`Error al conectar barril ${error}`)
     }
 }
+async function disconect(req,res){
+    try {
+        let idKeg = req.params.idKeg       
+        let connectedKeg = await Keg.findById(idKeg)
+        if(!connectedKeg)
+            res.status(404).send({mensaje: 'No se encontro el barril a conectar'})
+
+        if(connectedKeg.quantitySaled === connectedKeg.quantity)
+            connectedKeg.sta = 1
+        else
+            connectedKeg.sta = 2
+
+        await connectedKeg.save()
+        res.status(200).send({
+            mensaje:'Barril conectado',
+            connectedKeg   
+    })
+    } catch (error) {
+        res.status(500).send(`Error al conectar barril ${error}`)
+    }
+}
 async function empty(req,res){
     try {
         let idKeg = req.params.idKeg
@@ -145,5 +169,6 @@ module.exports = {
     updateKeg,
     getkeg,
     connect,
-    empty
+    empty,
+    disconect
 }
