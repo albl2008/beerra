@@ -1,5 +1,5 @@
 const Outflow = require('../Models/outflow');
-const Brewery = require('../Models/brewery')
+
 
 async function getOutflows(req,res){
     try {
@@ -23,7 +23,7 @@ async function getOutflow(req,res){
         if(Object.keys(outflow).length === 0)
             return res.status(404).send({message:'No hay gastos'}); 
 
-        res.status(200).send({outflows})     
+        res.status(200).send({outflow})     
     } catch (err) {
         res.status(500).send(`${err}`);
     }
@@ -40,6 +40,7 @@ async function createOutflow(req,res){
         outflow.type = req.body.type
         outflow.price = req.body.price
         outflow.unity = req.body.unity
+        outflow.date = req.body.date
     
         const outflowStoraged = await outflow.save()
         res.status(200).send({outflow:outflowStoraged})

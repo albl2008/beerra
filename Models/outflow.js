@@ -10,6 +10,7 @@ const outflowSchema = new Schema({
   quantity: String,
   unity: String,
   price: Number,
+  date: Date
 });
 
 const Outflow = mongoose.model('outflow', outflowSchema);
