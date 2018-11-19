@@ -32,7 +32,7 @@ async function createBottle(req,res){
 
         let bottle = new Bottle();
         bottle.beer = req.body.beer;
-        bottle.quantity = req.body.quantity;
+        bottle.stock = req.body.stock;
         bottle.size = req.body.size;
         bottle.ibu = req.body.ibu;
         bottle.alcohol = req.body.alcohol;
