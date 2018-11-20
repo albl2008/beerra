@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const apiKeg = require('./Routes/keg')
 const apiBrewery = require('./Routes/brewery')
@@ -8,7 +9,6 @@ const apiBottle = require('./Routes/bottle');
 const apiSale = require('./Routes/sale');
 const apiOutflow = require('./Routes/outflow');
 const api = require('./Routes/index')
-const morgan = require('morgan');
 const cors = require('cors');
 
 
