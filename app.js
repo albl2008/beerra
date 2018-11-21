@@ -25,5 +25,12 @@ app.use('/pipe',apiPipe);
 app.use('/brewery',apiBrewery);
 app.use('/sale',apiSale);
 app.use('/',api);
+app.use(errorHandling)
+
+function errorHandling(error,req,res,next){
+    console.log(error.message)
+    res.status(error.status || 500)
+    res.send(error.message)
+}
 
 module.exports = app;
