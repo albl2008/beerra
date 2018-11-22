@@ -4,7 +4,7 @@ const outflowCtrl = require('../Controllers/outflowCtrl')
 
 api.get('/',outflowCtrl.getOutflows);
 api.get('/:idOutflow',outflowCtrl.getOutflow);
-api.post('/',outflowCtrl.createOutflow);
+api.post('/',outflowCtrl.addOutflow);
 api.delete('/:idOutflow',outflowCtrl.deleteOutflow);
 api.put('/:idOutflow',outflowCtrl.updateOutflow)
 

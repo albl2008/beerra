@@ -30,7 +30,7 @@ async function getOutflow(req,res){
    
    
 }
-async function createOutflow(req,res){
+async function addOutflow(req,res){
     
     try {
 
@@ -84,7 +84,7 @@ async function updateOutflow(req, res){
 module.exports = {
     getOutflows,
     getOutflow,
-    createOutflow,
+    addOutflow,
     deleteOutflow,
     updateOutflow
 }

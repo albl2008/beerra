@@ -6,7 +6,7 @@ const Pint = require('../Models/pint')
 
 async function getkegs(req,res){
     try {
-        const Kegs = await Keg.find({"sta" : [ 1,2,3,4 ]}).populate('brewery')
+        const Kegs = await Keg.find({"sta" : [ 1,2,3,4,5 ]}).populate('brewery')
 
         if(Object.keys(Kegs).length === 0)
             return res.status(404).send({message:'No hay barriles'}); 
@@ -162,6 +162,20 @@ async function empty(req,res){
         res.status(500).send(`Error al conectar barril ${error}`)
     }
 }
+async function pay(req,res){
+    try {
+        let idKeg = req.params.idKeg
+        let pay = await Keg.findByIdAndUpdate(idKeg, {$set:{sta:5 }},{new:true})
+        if(!pay)
+            res.status(404).send({mensaje: 'No se encontro el barril a pagar'})
+        res.status(200).send({
+            mensaje:'Barril pagado',
+            pay   
+    })
+    } catch (error) {
+        res.status(500).send(`Error al pagar barril ${error}`)
+    }
+}
 module.exports = {
     getkegs,
     createKeg,
@@ -170,5 +184,6 @@ module.exports = {
     getkeg,
     connect,
     empty,
-    disconect
+    disconect,
+    pay
 }
