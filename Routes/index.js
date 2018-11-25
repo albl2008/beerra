@@ -7,7 +7,7 @@ const userCtrl=require('../Controllers/userCtrl');
 
 
 api.get('/',(req,res)=>{
-    res.send("Soy el login")
+    res.send({user: req.user})
 });
 
 api.post('/signup',userCtrl.signUp )
