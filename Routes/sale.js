@@ -8,5 +8,6 @@ api.get('/growlers/:idSale/',saleController.getGrowler)
 api.get('/pints/:idSale/',saleController.getPint)
 api.get('/bottles/:idSale/',saleController.getBottle)
 api.get('/other/:idSale/',saleController.getOther)
+api.get('/containers/:idSale/',saleController.getContainer)
 
 module.exports = api

@@ -9,6 +9,7 @@ const apiBottle = require('./Routes/bottle');
 const apiSale = require('./Routes/sale');
 const apiPayment = require ('./Routes/payment');
 const apiOutflow = require('./Routes/outflow');
+const apiContainer = require('./Routes/container');
 
 const api = require('./Routes/index')
 const morgan = require('morgan');
@@ -29,6 +30,7 @@ app.use('/pipe',apiPipe);
 app.use('/brewery',apiBrewery);
 app.use('/pricize',apiPricize);
 app.use('/sale',apiSale);
+app.use('/container',apiContainer);
 
 app.use('/',api);
 

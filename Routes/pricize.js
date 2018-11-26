@@ -10,6 +10,7 @@ api.put('/price/:idPricize',pricizeCtrl.updatePricize);
 
 api.post('/size',pricizeCtrl.addSize);
 api.get('/size',pricizeCtrl.getSizes);
+api.get('/size/growler',pricizeCtrl.getContainerSize);
 api.get('/size/:idSize',pricizeCtrl.getSize);
 api.put('/size/:idSize',pricizeCtrl.updateSize);
 

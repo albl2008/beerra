@@ -176,6 +176,20 @@ async function pay(req,res){
         res.status(500).send(`Error al pagar barril ${error}`)
     }
 }
+async function started(req,res){
+    try {
+        let idKeg = req.params.idKeg
+        let started = await Keg.findByIdAndUpdate(idKeg, {$set:{sta:2 }},{new:true})
+        if(!started)
+            res.status(404).send({mensaje: 'No se encontro el barril a desconectar'})
+        res.status(200).send({
+            mensaje:'Barril Desconectado',
+            started   
+    })
+    } catch (error) {
+        res.status(500).send(`Error al desconectar el barril ${error}`)
+    }
+}
 module.exports = {
     getkegs,
     createKeg,
@@ -185,5 +199,6 @@ module.exports = {
     connect,
     empty,
     disconect,
-    pay
+    pay,
+    started
 }

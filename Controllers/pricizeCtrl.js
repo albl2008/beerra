@@ -124,6 +124,23 @@ async function addSize(req,res){
     }
 }
 
+async function getContainerSize(req,res){
+    try {
+        const container = await Size.find({})
+
+        if(Object.keys(container).length === 0)
+            return res.status(404).send({message:'No hay envases'}); 
+        const growlersize = container.growlersize
+        const growlersize2 = container.growlersize2
+        res.status(200).send({growlersize,growlersize2})     
+    } catch (err) {
+        res.status(500).send(`${err}`);
+    }
+   
+   
+}
+
+
 async function updateSize(req, res){
 
     try {
@@ -152,5 +169,6 @@ module.exports = {
     getSize,
     getSizes,
     addSize,
-    updateSize
+    updateSize,
+    getContainerSize
 }
