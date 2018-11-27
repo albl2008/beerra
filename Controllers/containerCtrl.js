@@ -32,9 +32,8 @@ async function getContainer(req,res){
    
 }
 async function addContainer(req,res){
-    
     try {
-
+        
         let container = new Container();
         container.size = req.body.size
         container.stock = req.body.stock
