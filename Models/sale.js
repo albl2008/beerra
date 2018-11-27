@@ -26,6 +26,10 @@ const saleSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref:'other'
     }],
+    containers:[{
+        type: Schema.Types.ObjectId,
+        ref:'containerSale'
+    }],
     date:Date,
     totalSale:Number,
 })

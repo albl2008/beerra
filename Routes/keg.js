@@ -11,4 +11,5 @@ api.put('/connect/:idKeg/',kegCtrl.connect)
 api.put('/disconect/:idKeg/',kegCtrl.disconect)
 api.put('/empty/:idKeg/',kegCtrl.empty)
 api.put('/pay/:idKeg/',kegCtrl.pay)
+api.put('/started/:idKeg/',kegCtrl.started)
 module.exports = api;

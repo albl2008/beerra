@@ -5,6 +5,8 @@ const Other = require('../Models/other')
 const Keg = require('../Models/keg')
 const Bottle = require('../Models/bottle')
 const BottleSale = require('../Models/bottleSale')
+const Container = require('../Models/container')
+const ContainerSale = require('../Models/containerSale')
 const format = require('date-format')
 
 async function createSale(req, res) {
@@ -15,7 +17,7 @@ async function createSale(req, res) {
         sale.totalSale = req.body.totalSale
         sale.date =  req.body.date  
         let saleStoraged = await sale.save()
-        saleStoraged = saveProducts(req.body.growlers, req.body.bottles, req.body.pints, req.body.others,saleStoraged)
+        saleStoraged = saveProducts(req.body.growlers, req.body.bottles, req.body.pints, req.body.others,saleStoraged,req.body.containers)
         res.status(200).send({
             message: "Venta realizada correctamente",
 
@@ -72,7 +74,19 @@ async function getBottle(req,res){
     }
    
 }
-async function saveProducts(growlers, bottles, pints,other, saleStoraged) {
+async function getContainer(req,res){
+    try {
+        let containers = await ContainerSale.find({sale:req.params.idSale}).populate('container')
+        if(!containers)
+            res.status(404).send({mensaje:"La venta no tiene envases"})
+        res.status(200).send({containers})
+    } catch (error) {
+        res.status(500).send(`Error al buscar la venta  ${error}`)
+        console.log(error)
+    }
+   
+}
+async function saveProducts(growlers, bottles, pints,other, saleStoraged, containers) {
 
     if (growlers) {
         for (const element of growlers) {
@@ -141,6 +155,22 @@ async function saveProducts(growlers, bottles, pints,other, saleStoraged) {
             }
         }
     }
+    if (containers) {
+        for (const element of containers) {
+            let container = await Container.findById(element._id)
+            container.stock -= element.quantitySaled
+            let containerSale = new ContainerSale()
+            containerSale.container = element._id
+            containerSale.sale = saleStoraged._id
+            containerSale.quantitySaled = element.quantitySaled
+            containerSale.totalPrice = element.price
+            containerSale.unitPrice = element.cost
+            await container.save()
+            await containerSale.save()
+            await saleStoraged.containers.push(containerSale)
+            await saleStoraged.save()
+        }
+    }
     return saleStoraged;
 }
 
@@ -162,6 +192,6 @@ module.exports = {
     getGrowler,
     getPint,
     getBottle,
-    getOther
-
+    getOther,
+    getContainer
 }
