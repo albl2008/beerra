@@ -167,6 +167,15 @@ async function sendEmail(user){
           return true
      });
 }
+async function resetPassword(req,res){
+    if(!req.body.email){
+        const error = new Error('ingrese un mail')
+        error.status = 400
+        next(error)
+    }else{
+        const user 
+    }
+}
 module.exports = {
     signUp,
     signIn,

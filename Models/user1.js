@@ -9,7 +9,8 @@ const userSchema = new Schema({
   email: {type: String, required:false},
   password: {type: String,select:false},
   secretToken:String,
-  verify: {type: Boolean, default:false}
+  verify: {type: Boolean, default:false},
+  resetToken:String
   
 });
 
