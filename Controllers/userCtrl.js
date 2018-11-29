@@ -10,6 +10,9 @@ const schema = Joi.object().keys({
     password: Joi.string().min(8).trim().required(),
     email: Joi.string().email()
 })
+const email =Joi.object().keys({
+    email: Joi.string().email().required()
+})
 async function signUp(req,res,next){
         console.log(req.body)
         const result = Joi.validate(req.body, schema);
@@ -177,6 +180,8 @@ async function ResetTokenSendEmail(req,res,next){
             error.status = 400
             next(error)
         }else{
+            const result = Joi.validate(req.body,email)
+            if(result.error === null){
             const user = await User.findOne({email:req.body.email})
             if(user){
                 const payload = {
@@ -208,6 +213,11 @@ async function ResetTokenSendEmail(req,res,next){
             error.status = 404
             next(error)
             }
+        }else{
+            const error = new Error('El mail ingresado es invalido')
+            error.status = 401
+            next(error)
+        }
         } 
     } catch (error) {
         next(error)
@@ -247,7 +257,9 @@ async function newPassword(req,res,next){
 async function sendUserName(req,res,next){
     try {
         if(req.body.email){
+            const result = Joi.validate(req.body,email)
             const user = await User.findOne({email:req.body.email})
+            if(result.error === null){
             if(user){
                 const mailOptions = {
                     from: 'marianobuglio@gmail.com', 
@@ -265,6 +277,11 @@ async function sendUserName(req,res,next){
                 error.status = 404
                 next(error)
             }
+        }else{
+            const error = new Error('Ingrese un mail valido.')
+            error.status = 404
+            next(error)
+        }
         }else{
             const error = new Error('Ingrese un mail.')
             error.status = 400
