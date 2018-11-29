@@ -15,6 +15,7 @@ api.post('/signin',userCtrl.signIn)
 api.post('/verify',userCtrl.verify)
 api.post('/resetPassword',userCtrl.ResetTokenSendEmail)
 api.post('/newPassword/',userCtrl.newPassword)
+api.post('/recoverUsername',userCtrl.sendUserName)
 
 /*api.get('/private',auth,function(req,res){
     res.status(200).send({message:'tienes acceso'});

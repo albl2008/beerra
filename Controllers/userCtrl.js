@@ -162,8 +162,10 @@ async function sendEmail(user,mailOptions){
   
 
       transporter.sendMail(mailOptions, function (err, info) {
-        if(err)
-          next(err)
+        if(err){
+            const error = new Error('Error al envia el mail intentelo mas tarde')
+          next(error)
+        }
         else
           return true
      });
@@ -242,10 +244,42 @@ async function newPassword(req,res,next){
             next(error)
         }
 }
+async function sendUserName(req,res,next){
+    try {
+        if(req.body.email){
+            const user = await User.findOne({email:req.body.email})
+            if(user){
+                const mailOptions = {
+                    from: 'marianobuglio@gmail.com', 
+                    to: user.email, 
+                    subject:'Recuperacion de usuario' , 
+                    html: `El usuario que a elegido previamente es <strong>${user.username}</strong> 🍻`// plain text body
+                };
+                if(sendEmail(user.email,mailOptions)){
+                    res.status(200).send({
+                        message: 'Se ha enviado un mail que contiene su usuario elegido.'
+                    })
+                }
+            }else{
+                const error = new Error('No existe un usuario con el mail ingresado.')
+                error.status = 404
+                next(error)
+            }
+        }else{
+            const error = new Error('Ingrese un mail.')
+            error.status = 400
+            next(error)
+        }
+    } catch (error) {
+        const err = new Error('Error interno del servidor') 
+        next(err)
+    }
+}
 module.exports = {
     signUp,
     signIn,
     verify,
     ResetTokenSendEmail,
-    newPassword
+    newPassword,
+    sendUserName
 }
