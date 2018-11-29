@@ -11,7 +11,7 @@ const schema = Joi.object().keys({
     email: Joi.string().email()
 })
 async function signUp(req,res,next){
-    
+        console.log(req.body)
         const result = Joi.validate(req.body, schema);
         if(result.error === null){ 
             const user = await User.findOne({username: req.body.username})
@@ -42,7 +42,13 @@ async function signUp(req,res,next){
                })
               const insertedUser = await newUser.save()
                 if(insertedUser){
-                    if(sendEmail(insertedUser)){
+                    const mailOptions = {
+                        from: 'marianobuglio@gmail.com', // sender address
+                        to: insertedUser.email, // list of receivers
+                        subject:'Verificacion de usuario' , // Subject line
+                        html: `Ingrese el  token: <strong>${insertedUser.secretToken}</strong> en el siguiente formulario <a href="http://localhost:8080/#/verify">Verificar Cuenta</a> 🍻 `// plain text body
+                      };
+                    if(sendEmail(insertedUser,mailOptions)){
                         res.status(200).send({
                             message: 'Usuario registrado correctamente ingrese a su email y verifique la cuenta'
                         })
@@ -145,7 +151,7 @@ async function verify(req,res,next){
     }
 }
 
-async function sendEmail(user){
+async function sendEmail(user,mailOptions){
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -153,31 +159,93 @@ async function sendEmail(user){
                pass: '20071993loko7123'
            }
        });
-       const mailOptions = {
-        from: 'marianobuglio@gmail.com', // sender address
-        to: user.email, // list of receivers
-        subject:'Verificacion de usuario' , // Subject line
-        html: `Ingrese el  token: ${user.secretToken} en el siguiente formulario http://localhost:8080/#/verify 🍻 `// plain text body
-      };
+  
 
       transporter.sendMail(mailOptions, function (err, info) {
         if(err)
-          return false
+          next(err)
         else
           return true
      });
 }
-async function resetPassword(req,res){
-    if(!req.body.email){
-        const error = new Error('ingrese un mail')
-        error.status = 400
+async function ResetTokenSendEmail(req,res,next){
+    try {
+        if(!req.body.email){
+            const error = new Error('ingrese un mail')
+            error.status = 400
+            next(error)
+        }else{
+            const user = await User.findOne({email:req.body.email})
+            if(user){
+                const payload = {
+                    _id: user._id,
+                    username: user.username
+                }
+                const token = await jwt.sign(payload,config.TOKEN_SECRET,{
+                    expiresIn: '1d'
+                })
+            if(token){
+                user.resetToken = token
+                userSaved = await user.save()
+            if(userSaved){
+                const mailOptions = {
+                    from: 'marianobuglio@gmail.com', 
+                    to: userSaved.email, 
+                    subject:'Restablecer contraseña' , 
+                    html: `Ingrese en el siguiente  link para restablecer su contraseña <a href= http://localhost:8080/#/resetPassword/${user.resetToken}>Restablecer contraseña</a>`// plain text body
+                };
+                if(sendEmail(userSaved.email,mailOptions)){
+                    res.status(200).send({
+                        message: 'Se ha enviado un link a su mail para restablecer contraseña'
+                    })
+                }
+            }
+            }
+            }else{
+            const error = new Error('No existe usuario con ese email')
+            error.status = 404
+            next(error)
+            }
+        } 
+    } catch (error) {
         next(error)
-    }else{
-        const user 
     }
+}
+async function newPassword(req,res,next){
+        try {
+            const token = req.body.token
+            const payload = await jwt.verify(token, config.TOKEN_SECRET)
+            if(payload){
+                let user = await User.findById(payload._id)
+                if(user.resetToken){
+                    const hashedPassword =await  bcrypt.hash(req.body.password,12)
+                    user.password = hashedPassword
+                    user.resetToken =''
+                    const userSaved = await user.save()
+                    if(userSaved){
+                        res.status(200).send({
+                            message: 'Contraseña restablecida correctamente'
+                        })
+                    }
+                }else{
+                const error = new Error('El token para restablecer la contraseña ya ha sido utilizado')
+                error.status = 400
+                next(error)
+                }
+            }else{
+                const error = new Error('Token expirado reenvie la solicitud')
+                error.status = 400
+                next(error)
+            }
+            
+        } catch (error) {
+            next(error)
+        }
 }
 module.exports = {
     signUp,
     signIn,
-    verify
+    verify,
+    ResetTokenSendEmail,
+    newPassword
 }

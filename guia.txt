@@ -3,16 +3,16 @@
 
 [x] Agregar campo a modelo usuario llamado : resetToken 
 [x] Crear boton o link en signin ¿Olvidaste tu contraseña?
-[ ] Hacer formulario para enviar mail
-[ ] Crear ruta post /resetPassword
-[ ] En userCrtl crear un ResetTokenSendEmail(req,res) para crear un jwt con expiracion 24h
-        .[ ] Verificar si  el mail recibido es correcto y pertenece a un usuario.
-        .[ ] Crear jwt con funcion sign y los datos del usuario (Expiracion 24hs).
-        .[ ] Guardar usuario con el nuevo campo resetToken
-        .[ ] Enviar mail  con una URL con el token creado para resetear resetPassword.
+[x] Hacer formulario para enviar mail
+[x] Crear ruta post /resetPassword (backend)
+[x] En userCrtl crear un ResetTokenSendEmail(req,res) para crear un jwt con expiracion 24h
+        .[x] Verificar si  el mail recibido es correcto y pertenece a un usuario.
+        .[x] Crear jwt con funcion sign y los datos del usuario (Expiracion 24hs).
+        .[x] Guardar usuario con el nuevo campo resetToken
+        .[x] Enviar mail  con una URL con el token creado para resetear resetPassword.
     
     // Usuario ingresa a URL recibida en el mail
-
+[x] Obetener token de la url accedida por el usuario (frontend) /resetPassword/:token
 [ ] Creamos ruta get /resetPassword/:token
 [ ] En userCrtl crear resetPassword(req,res)
     .[ ] Verificamos si el token es correcto y obtenemos el payload
