@@ -3,7 +3,7 @@ const Brewery = require('../Models/brewery')
 
 async function getpipes(req,res){
     try {
-        const Pipes = await Keg.find({status:3}).populate('brewery')
+        const Pipes = await Keg.find({status:3,user:req.user._id}).populate('brewery')
 
         if(Object.keys(Pipes).length === 0)
             return res.status(404).send({message:'No hay barriles conectados'}); 

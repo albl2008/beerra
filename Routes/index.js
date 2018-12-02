@@ -1,12 +1,12 @@
 const express = require('express');
 const api = express.Router();
-const auth=require('../Middelwares/auth');
+const auth=require('../Middelwares/auth1');
 const userCtrl=require('../Controllers/userCtrl');
 
 
 
 
-api.get('/',(req,res)=>{
+api.get('/',auth.checkTocken,(req,res)=>{
     res.send({user: req.user})
 });
 

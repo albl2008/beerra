@@ -16,6 +16,7 @@ async function createSale(req, res) {
         sale.client = req.body.client
         sale.totalSale = req.body.totalSale
         sale.date =  req.body.date  
+        sale.user = req.user._id
         let saleStoraged = await sale.save()
         saleStoraged = saveProducts(req.body.growlers, req.body.bottles, req.body.pints, req.body.others,saleStoraged,req.body.containers)
         res.status(200).send({
@@ -175,7 +176,7 @@ async function saveProducts(growlers, bottles, pints,other, saleStoraged, contai
 }
 
 async function getSales(req, res) {
-    const sales = await Sale.find({}).populate('growlers').populate('pints').populate('bottles')
+    const sales = await Sale.find({user: req.user._id}).populate('growlers').populate('pints').populate('bottles')
     if (!sales)
         res.status(404).send({
             message: "No se encontraron ventas"

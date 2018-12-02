@@ -11,6 +11,7 @@ async function checkTocken(req, res, next){
                 const user = await jwt.verify(token, config.TOKEN_SECRET)
                 if(user){
                     req.user = user
+                    console.log(req.user)
                     next()
                 }else{
                     next()

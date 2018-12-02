@@ -14,6 +14,10 @@ const kegSchema = new Schema({
   brewery: {
     type: Schema.Types.ObjectId,
     ref: 'brewery'
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'user1'
   }
 });
 

@@ -6,7 +6,7 @@ const Pint = require('../Models/pint')
 
 async function getkegs(req,res){
     try {
-        const Kegs = await Keg.find({"sta" : [ 1,2,3,4,5 ]}).populate('brewery')
+        const Kegs = await Keg.find({ user: req.user._id}).populate('brewery')
 
         if(Object.keys(Kegs).length === 0)
             return res.status(404).send({message:'No hay barriles'}); 
@@ -51,7 +51,7 @@ async function createKeg(req,res){
         keg.ibu = req.body.ibu
         keg.alcohol = req.body.alcohol;
         keg.brewery = req.body.brewery;
-    
+        keg.user = req.user._id
         const kegStoraged = await keg.save()
         res.status(200).send({keg:kegStoraged})
             

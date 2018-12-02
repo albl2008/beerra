@@ -3,8 +3,8 @@ const Brewery = require('../Models/brewery')
 
 async function getBottles(req,res){
     try {
-        const bottles = await Bottle.find({}).populate('brewery')
-
+        console.log(req.user._id)
+        const bottles = await Bottle.find({user: req.user._id}).populate('brewery')
         if(!bottles)
             return res.status(404).send({message:'No hay botellas'}); 
 
@@ -26,7 +26,7 @@ async function getBottle(req,res){
     }
     
 }
-async function createBottle(req,res){
+async function createBottle(req,res,next){
     
     try {
 
@@ -38,12 +38,13 @@ async function createBottle(req,res){
         bottle.alcohol = req.body.alcohol;
         bottle.brewery = req.body.brewery;
         bottle.price = req.body.price;
+        bottle.user = req.user._id
         const bottleStoraged = await bottle.save()
         res.status(200).send({bottle:bottleStoraged})
             
     } catch (err) {
 
-        res.status(500).send(`Error al guardar las botellas ${err}`)
+       next(err)
     }
 }
 async function deleteBottle(req,res){

@@ -9,6 +9,10 @@ const paySchema = new Schema({
     date: Date,
     ammount: Number,
     brewery : String,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user1'
+      }
 });
 
 const Pay = mongoose.model('pay', paySchema);

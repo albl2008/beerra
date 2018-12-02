@@ -5,7 +5,11 @@ const sizeSchema = new Schema({
     growlersize:Number,
     growlersize2:Number,
     pintsize:Number,
-    pintsize2:Number
+    pintsize2:Number,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user1'
+      }
     
 })
 

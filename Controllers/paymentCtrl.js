@@ -4,7 +4,7 @@ const Keg = require('../Models/keg')
 
 
 async function getPayments(req, res) {
-    const pays = await Payment.find({}).populate('keg')
+    const pays = await Payment.find({user: req.user._id}).populate('keg')
     if (!pays)
         res.status(404).send({
             message: "No se encontraron pagos"
@@ -32,15 +32,16 @@ async function getPayment(req,res){
 async function addPayment(req,res){
     
     try {
-        console.log(req.body)
+        console.log(req.user)
         let payment = new Payment();
         payment.date= req.body.date;
         payment.ammount = req.body.ammount
         payment.keg = req.body.keg
         payment.brewery = req.body.brewery
+        payment.user = req.user._id
         const paymentStoraged = await payment.save()
+        
         res.status(200).send({payment:paymentStoraged})
-            
     } catch (err) {
 
         res.status(500).send(`Error al pagar el barril ${err}`)
