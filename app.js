@@ -20,19 +20,19 @@ const auth = require('./Middelwares/auth1')
 app.use(morgan('dev')); 
 app.use(bodyParser.json());
 app.use(cors());
+app.use('/',api);
 app.use(auth.checkTocken)
 
 
-app.use('/keg',apiKeg);
-app.use('/payment',apiPayment);
+app.use('/keg',auth.isLoggedIN,apiKeg);
+app.use('/payment',auth.isLoggedIN,apiPayment);
 app.use('/outflow',apiOutflow);
-app.use('/bottle',apiBottle);
+app.use('/bottle',auth.isLoggedIN,apiBottle);
 app.use('/pipe',apiPipe);
-app.use('/brewery',apiBrewery);
-app.use('/pricize',apiPricize);
+app.use('/brewery',auth.isLoggedIN,apiBrewery);
+app.use('/pricize',auth.isLoggedIN,apiPricize);
 app.use('/sale',apiSale);
 app.use('/container',apiContainer)
-app.use('/',api);
 app.use(errorHandling)
 
 function errorHandling(error,req,res,next){

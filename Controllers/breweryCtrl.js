@@ -38,9 +38,9 @@ async function deleteBrewery(req,res){
         let idBrewery = req.params.idBrewery
         let brewery = await Brewery.findById(idBrewery)
         if(!brewery)
-            res.status(404).send({mensaje:'El gasto a eliminar no existe'})
-         await brewery.remove()
-        res.status(200).send({mensaje:'gasto eliminado correctamente'})
+          return  res.status(404).send({mensaje:'Cerveceria a eliminar no existe'})
+        await brewery.remove()
+        res.status(200).send({mensaje:'Cerveceria eliminada correctamente'})
 
     } catch (err) {
         res.status(500).send({mensaje:`Error al eliminar el gasto ${err}`})
@@ -51,7 +51,7 @@ function createBrewery(req,res){
     brewery.name = req.body.name
     brewery.contact = req.body.contact
     brewery.address = req.body.address
-    
+    brewery.user = req.user._id
     brewery.save()
         .then((breweryStoraged)=>{
             res.status(200).send({brewery:breweryStoraged})
@@ -64,28 +64,39 @@ function createBrewery(req,res){
 
 }
 
-async function getBreweries(req, res){
+async function getBreweries(req, res,next){
     try {
         
-        const Breweries = await Brewery.find({})
-        if(Object.keys(Breweries).length === 0)
-            res.status(404).send("No existen Fabricas cargadas")
-        res.status(200).send({Breweries});
+        const Breweries = await Brewery.find({user:req.user._id})
+        if(Object.keys(Breweries).length === 0){
+            let error = new Error('No existen cervecerias')
+            error.status = 404
+            next(error)
+        }
+
+            res.status(200).send({Breweries});
+        
     } catch (error) {
-        res.status(500).send({mensaje:`Error al listar las fabricas ${error}`})
+     
+            
+            next(error)
     }
    
     
 }
-async function getBrewery(req, res){
+async function getBrewery(req, res, next){
     try {
         let idBrewery = req.params.idBrewery
         const brewery = await Brewery.findById(idBrewery)
-        if(!brewery)
-            res.status(404).send("No existen Fabricas cargadas")
+        if(!brewery){
+            let error = new Error('No existe cervezeria a eliminar')
+            error.status = 404
+            next(error)
+        }
         res.status(200).send({brewery});
     } catch (error) {
-        res.status(500).send({mensaje:`Error al mostrar la fabrica ${error}`})
+        
+        next(error)
     }
    
     

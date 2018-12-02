@@ -3,7 +3,7 @@ const Outflow = require('../Models/outflow');
 
 async function getOutflows(req,res){
     try {
-        const Outflows = await Outflow.find({})
+        const Outflows = await Outflow.find({user: req.user._id})
 
         if(Object.keys(Outflows).length === 0)
             return res.status(404).send({message:'No hay gastos'}); 
@@ -41,7 +41,7 @@ async function addOutflow(req,res){
         outflow.price = req.body.price
         outflow.unity = req.body.unity
         outflow.date = req.body.date
-    
+        outflow.user = req.user._id
         const outflowStoraged = await outflow.save()
         res.status(200).send({outflow:outflowStoraged})
             

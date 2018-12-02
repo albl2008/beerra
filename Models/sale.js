@@ -32,6 +32,10 @@ const saleSchema = new Schema({
     }],
     date:Date,
     totalSale:Number,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user1'
+    }
 })
 
 

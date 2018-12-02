@@ -3,7 +3,7 @@ const Container = require('../Models/container');
 
 async function getContainers(req,res){
     try {
-        const Containers = await Container.find({})
+        const Containers = await Container.find({user:req.user._id})
 
         if(Object.keys(Containers).length === 0)
             return res.status(404).send({message:'No hay envases'}); 
@@ -38,6 +38,7 @@ async function addContainer(req,res){
         container.size = req.body.size
         container.stock = req.body.stock
         container.cost = req.body.cost
+        container.user = req.user._id
         const containerStoraged = await container.save()
         res.status(200).send({container:containerStoraged})
             

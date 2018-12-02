@@ -8,7 +8,11 @@ const pricizeSchema = new Schema({
     pintprice2:Number,
     loadprice:Number,
     loadprice2:Number,
-    hhourprice:Number
+    hhourprice:Number,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'user1'
+      }
 })
 
 const pricize = mongoose.model('pricize',pricizeSchema)

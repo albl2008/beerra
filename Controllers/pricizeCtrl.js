@@ -4,7 +4,7 @@ const Pricize = require('../Models/pricize');
 
 
 async function getPricizes(req, res) {
-    const Pricizes = await Pricize.find({})
+    const Pricizes = await Pricize.find({user: req.user._id})
     if (!Pricizes)
         res.status(404).send({
             message: "No se encontraron pagos"
@@ -41,7 +41,7 @@ async function addPricize(req,res){
         pricize.loadprice = req.body.loadprice
         pricize.loadprice2 = req.body.loadprice2
         pricize.hhourprice = req.body.hhourprice
-        
+        pricize.user = req.user._id
         const pricizeStoraged = await pricize.save()
         res.status(200).send({pricize:pricizeStoraged})
             
@@ -80,7 +80,7 @@ const Size = require('../Models/size');
 
 
 async function getSizes(req, res) {
-    const Sizes = await Size.find({})
+    const Sizes = await Size.find({user:req.user._id})
     if (!Sizes)
         res.status(404).send({
             message: "No se encontraron tamaños"
@@ -114,7 +114,7 @@ async function addSize(req,res){
         size.growlersize2 = req.body.growlersize2
         size.pintsize = req.body.pintsize
         size.pintsize2 = req.body.pintsize2
-        
+        size.user = req.user._id
         const sizeStoraged = await size.save()
         res.status(200).send({size:sizeStoraged})
             

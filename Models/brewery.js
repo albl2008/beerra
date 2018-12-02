@@ -8,7 +8,11 @@ const brewerySchema = new Schema({
     name: String,
     tel: Number,
     mail: String
-  }]
+  }],
+  user:{
+    type:Schema.Types.ObjectId,
+    ref:'user1'
+  }
 
 });
 
