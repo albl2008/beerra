@@ -1,32 +1,39 @@
 
-/*
-function getbrewerys(req,res){
-   Keg.find({})
-   .then((brewerys)=>{
-        if(Object.keys(brewerys).length === 0)
-            return res.status(404).send({message:'No hay barriles'});        
-        res.status(200).send({brewerys})       
-   })
-   .catch((err)=>{
-    if(err) res.status(500).send(`${err}`);
-    
-   })
-}*/
-const Brewery = require('../Models/brewery');
 
-async function updateBrewery(req, res){
+const Brewery = require('../Models/brewery');
+const Joi = require('joi')
+
+const schema = Joi.object().keys({
+    id: Joi.string(),
+    name: Joi.string().min(3).max(20).required(),
+    contact: Joi.array().items(Joi.object({
+      name: Joi.string().required(),
+      tel: Joi.number().required(),
+      mail: Joi.string().email().required(),
+    })).min(1).required(),
+    address : Joi.string().min(5).max(30).required()
+  })
+async function updateBrewery(req, res,next){
 
     try {
-        let idBrewery = req.params.idBrewery
-        let dataBrewery = req.body
-        let breweryUpdated = await Brewery.findByIdAndUpdate(idBrewery, dataBrewery)
-        
-        if(!breweryUpdated)
-            res.status(404).send('El gasto a actualizar no existe')
-        res.status(200).send({
-            mensaje:'gasto actualizado correctamente',
-            brewery: dataBrewery
-        })
+        const result = Joi.validate(req.body,schema)
+        if(result.error === null){
+            let idBrewery = req.params.idBrewery
+            let dataBrewery = req.body
+            let breweryUpdated = await Brewery.findByIdAndUpdate(idBrewery, dataBrewery)
+            
+            if(!breweryUpdated)
+                res.status(404).send('El gasto a actualizar no existe')
+            res.status(200).send({
+                mensaje:'gasto actualizado correctamente',
+                brewery: dataBrewery
+            })
+        }else{
+            console.log(result.error.message)
+            let error = new Error('Los datos ingresados son invalidos')
+            error.status = 422
+            next(error)
+        }
     } catch (error) {
         res.status(500).send(`Error al actualizar gasto ${error}`)
     }
@@ -46,19 +53,29 @@ async function deleteBrewery(req,res){
         res.status(500).send({mensaje:`Error al eliminar el gasto ${err}`})
     }
 }
-function createBrewery(req,res){
-    let brewery = new Brewery();
-    brewery.name = req.body.name
-    brewery.contact = req.body.contact
-    brewery.address = req.body.address
-    brewery.user = req.user._id
-    brewery.save()
-        .then((breweryStoraged)=>{
+async function createBrewery(req,res,next){
+try {
+    const result = Joi.validate(req.body,schema)
+    if(result.error === null){
+        let brewery = new Brewery();
+        brewery.name = req.body.name
+        brewery.contact = req.body.contact
+        brewery.address = req.body.address
+        brewery.user = req.user._id
+        const breweryStoraged =await brewery.save()
+        if(breweryStoraged){
             res.status(200).send({brewery:breweryStoraged})
-        })
-        .catch((err)=>{
-            res.status(500).send(`Error al guardar brewery ${err}`)
-        })
+        }
+    }else{
+        console.log(result.error.message)
+        let error = new Error('Los datos ingresados son invalidos')
+        error.status = 422
+        next(error)
+    }
+} catch (error) {
+    next(error)
+}
+       
         
 
 

@@ -3,7 +3,7 @@ const Brewery = require('../Models/brewery')
 const Growler = require('../Models/growler')
 const Other = require('../Models/other')
 const Pint = require('../Models/pint')
-
+const Joi = require('joi')
 async function getkegs(req,res){
     try {
         const Kegs = await Keg.find({ user: req.user._id}).populate('brewery')
@@ -36,28 +36,45 @@ async function getkeg(req,res){
    
    
 }
-async function createKeg(req,res){
+async function createKeg(req,res,next){
     
     try {
+        const result = Joi.validate(req.body,schema)
 
-        let keg = new Keg();
-        keg.beer = req.body.beer
-        keg.sta = req.body.sta
-        if(keg.sta === 2) 
-            keg.quantitySaled = req.body.quantitySaled 
-        else
-            keg.quantitySaled = req.body.quantity
-        keg.quantity = req.body.quantity
-        keg.ibu = req.body.ibu
-        keg.alcohol = req.body.alcohol;
-        keg.brewery = req.body.brewery;
-        keg.user = req.user._id
-        const kegStoraged = await keg.save()
-        res.status(200).send({keg:kegStoraged})
+        if(req.body.quantity < req.body.quantitySaled){
+        let err = new Error( 'informacion invalida')
+        err.status = 422
+        next(err)
+          
+        }else if(result.error ===null){
+           
+            let keg = new Keg();
+            keg.beer = req.body.beer
+            keg.sta = req.body.sta
             
-    } catch (err) {
+            if(keg.sta === 2) 
+                keg.quantitySaled = req.body.quantitySaled 
+            else
+                keg.quantitySaled = req.body.quantity
 
-        res.status(500).send(`Error al guardar el barril ${err}`)
+            keg.quantity = req.body.quantity
+            keg.ibu = req.body.ibu
+            keg.alcohol = req.body.alcohol;
+            keg.brewery = req.body.brewery;
+            keg.user = req.user._id
+            const kegStoraged = await keg.save()
+            if(kegStoraged){
+                res.status(200).send({keg:kegStoraged})
+            }
+
+        }else{
+            console.log(result)
+            let err = new Error('Informacion ingresada ivalida')
+            err.status = 422
+            next(err)
+        }
+    } catch (err) {
+            next(err)
     }
 }
 async function deleteKeg(req,res){
@@ -95,21 +112,31 @@ async function verifySale(idKeg){
     else
         return true
 }
-async function updateKeg(req, res){
+async function updateKeg(req, res,next){
 
     try {
-        let idKeg = req.params.idKeg
-        let dataKeg = req.body
-        let kegUpdated = await Keg.findByIdAndUpdate(idKeg, dataKeg)
-        
-        if(!kegUpdated)
-            res.status(404).send('El barril a actualizar no existe')
-        res.status(200).send({
-            mensaje:'Barril actualizado correctamente',
-            keg: dataKeg
-        })
+        const result = Joi.validate(req.body,updateschema)
+        if(req.body.quantity < req.body.quantitySaled){
+            let err = new Error( 'Datos ingresados incorrectos')
+            err.status = 422
+            next(err)    
+        }else if(result.error === null){
+            let idKeg = req.params.idKeg
+            let dataKeg = req.body
+            let kegUpdated = await Keg.findByIdAndUpdate(idKeg, dataKeg)
+            if(!kegUpdated)
+                res.status(404).send('El barril a actualizar no existe')
+            res.status(200).send({
+                mensaje:'Barril actualizado correctamente',
+                keg: dataKeg
+            })
+        }else{
+            let error = new Error('Datos ingresados incorrectos')
+            error.status = 422
+            next(error)
+        }
     } catch (error) {
-        res.status(500).send(`Error al actualizar barril ${error}`)
+        next(error)
     }
   
 }
@@ -190,6 +217,30 @@ async function started(req,res){
         res.status(500).send(`Error al desconectar el barril ${error}`)
     }
 }
+
+const schema = Joi.object().keys({
+    beer : Joi.string().min(2).max(30).required(),
+    quantity : Joi.number().positive().min(20).max(50).required(),
+    sta : Joi.number().positive().required(),
+    ibu : Joi.number().positive().required(),
+    alcohol : Joi.number().positive().required(),
+    brewery : Joi.string().required(),
+    quantitySaled : Joi.number().positive().max(50)
+})
+const updateschema = Joi.object().keys({
+    id: Joi.string(),
+    beer : Joi.string().min(2).max(30),
+    quantity : Joi.number().positive().min(20).max(50),
+    sta : Joi.number().positive(),
+    ibu : Joi.number().positive(),
+    alcohol : Joi.number().positive(),
+    brewery : Joi.string(),
+    quantitySaled : Joi.number().positive().max(50)
+})
+
+
+
+
 module.exports = {
     getkegs,
     createKeg,
