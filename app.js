@@ -28,11 +28,11 @@ app.use('/keg',auth.isLoggedIN,apiKeg);
 app.use('/payment',auth.isLoggedIN,apiPayment);
 app.use('/outflow',apiOutflow);
 app.use('/bottle',auth.isLoggedIN,apiBottle);
-app.use('/pipe',apiPipe);
+app.use('/pipe',auth.isLoggedIN,apiPipe);
 app.use('/brewery',auth.isLoggedIN,apiBrewery);
 app.use('/pricize',auth.isLoggedIN,apiPricize);
-app.use('/sale',apiSale);
-app.use('/container',apiContainer)
+app.use('/sale',auth.isLoggedIN,apiSale);
+app.use('/container',auth.isLoggedIN,apiContainer)
 app.use(errorHandling)
 
 function errorHandling(error,req,res,next){
