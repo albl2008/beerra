@@ -9,5 +9,5 @@ api.get('/pints/:idSale/',saleController.getPint)
 api.get('/bottles/:idSale/',saleController.getBottle)
 api.get('/other/:idSale/',saleController.getOther)
 api.get('/containers/:idSale/',saleController.getContainer)
-
+api.get('/salesformonth', saleController.salesForMonth)
 module.exports = api

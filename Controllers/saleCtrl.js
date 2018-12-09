@@ -8,7 +8,7 @@ const BottleSale = require('../Models/bottleSale')
 const Container = require('../Models/container')
 const ContainerSale = require('../Models/containerSale')
 const format = require('date-format')
-
+const mongoose = require('mongoose')
 async function createSale(req, res) {
    
     try {
@@ -187,6 +187,32 @@ async function getSales(req, res) {
 
 }
 
+// Reportes
+
+async function salesForMonth(req,res,next){
+    try {    
+        const sales = await Sale.aggregate(
+            [     {
+                $match:{
+                    user: mongoose.Types.ObjectId(req.user._id)
+                    }
+              },
+                {
+                $group: {
+                  _id : { year: { $year : "$date" }, month: { $month : "$date" }}, 
+                       count : { $sum : 1 }
+                  }
+                },
+            ]
+        )
+        if(sales){
+            res.status(200).send({sales})
+        }
+    } catch (error) {
+       next(error)  
+    }
+}
+
 module.exports = {
     createSale,
     getSales,
@@ -194,5 +220,6 @@ module.exports = {
     getPint,
     getBottle,
     getOther,
-    getContainer
+    getContainer,
+    salesForMonth
 }
