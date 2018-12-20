@@ -176,16 +176,25 @@ async function saveProducts(growlers, bottles, pints,other, saleStoraged, contai
 }
 
 async function getSales(req, res) {
-    const sales = await Sale.find({user: req.user._id}).populate('growlers').populate('pints').populate('bottles')
-    if (!sales)
+    const sales = await Sale.find({user: req.user._id}).sort({date: -1}).populate('client')
+    if (!sales){
         res.status(404).send({
             message: "No se encontraron ventas"
-        })
+        })}
     res.status(200).send({
         sales
     })
 
 }
+async function getSalesofClient(req, res) {
+    const Sales = await Sale.find({"client":req.params.idClient}).populate('client').populate('growlers').populate('pints')
+    if (!Sales)
+        res.status(404).send({
+            message: "No se encontraron ventas"
+        })
+    res.status(200).send({
+        Sales
+    })
 
 // Reportes
 
@@ -335,4 +344,5 @@ module.exports = {
     salesForMonth,
     TypesForMonth,
     litresForMonth
+
 }
