@@ -3,12 +3,14 @@ const config = require('../config')
 
 async function checkTocken(req, res, next){
     const authHeader = req.get('authorization')
-
+    try {
+        
         if(authHeader){
-           
+        
             const token = authHeader.split(' ')[1]
             if(token){
                 const user = await jwt.verify(token, config.TOKEN_SECRET)
+                console.log(user)
                 if(user){
                     req.user = user
                     console.log(req.user)
@@ -22,10 +24,15 @@ async function checkTocken(req, res, next){
         }else{
             next()
         }
+    } catch (error) {
+        error.status=401
+        next(error)
+    }
     
 }
 async function isLoggedIN(req, res, next){
     if(req.user){
+        
         next()
     }else{
         const error = new Error('No tiene acceso 🚫')
