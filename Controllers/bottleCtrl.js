@@ -1,5 +1,7 @@
 const Bottle = require('../Models/bottle');
 const Brewery = require('../Models/brewery')
+const BottleBuy = require('../Models/bottleBuy')
+const async = require ('async');
 
 async function getBottles(req,res){
     try {
@@ -26,18 +28,42 @@ async function getBottle(req,res){
     }
     
 }
+
+async function getBottlebuys(req,res){
+    try {
+        BottleBuy
+        .find({user:req.user._id})
+            .populate({
+	            path:     'bottle',			
+                populate: { path:  'brewery', 
+                            model: 'brewery' }          
+            })
+        .exec(function(err, data){
+            if (err) console.log(err);
+            const BottleBuys = data
+            if(Object.keys(BottleBuys).length === 0)
+            return res.status(404).send({message:'No hay gastos'}); 
+
+        res.status(200).send({BottleBuys}) 
+        });
+        
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(`${err}`);
+    }
+   
+}
 async function createBottle(req,res,next){
     
     try {
 
         let bottle = new Bottle();
         bottle.beer = req.body.beer;
-        bottle.stock = req.body.stock;
         bottle.size = req.body.size;
         bottle.ibu = req.body.ibu;
         bottle.alcohol = req.body.alcohol;
         bottle.brewery = req.body.brewery;
-        bottle.price = req.body.price;
+       
         bottle.user = req.user._id
         const bottleStoraged = await bottle.save()
         res.status(200).send({bottle:bottleStoraged})
@@ -83,5 +109,6 @@ module.exports = {
     createBottle,
     deleteBottle,
     updateBottle,
-    getBottle
+    getBottle,
+    getBottlebuys
 }

@@ -9,6 +9,7 @@ const apiPipe = require('./Routes/pipe');
 const apiBottle = require('./Routes/bottle');
 const apiSale = require('./Routes/sale');
 const apiPayment = require ('./Routes/payment');
+const apiClient = require('./Routes/client')
 const apiOutflow = require('./Routes/outflow');
 const apiContainer = require('./Routes/container')
 const api = require('./Routes/index')
@@ -28,6 +29,7 @@ app.use('/keg',auth.isLoggedIN,apiKeg);
 app.use('/payment',auth.isLoggedIN,apiPayment);
 app.use('/outflow',apiOutflow);
 app.use('/bottle',auth.isLoggedIN,apiBottle);
+app.use('/clients',apiClient);
 app.use('/pipe',auth.isLoggedIN,apiPipe);
 app.use('/brewery',auth.isLoggedIN,apiBrewery);
 app.use('/pricize',auth.isLoggedIN,apiPricize);

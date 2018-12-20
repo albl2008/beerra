@@ -3,7 +3,12 @@ const Schema = mongoose.Schema
 
     
 const saleSchema = new Schema({
-    client: String,
+    client:{
+       
+        type: Schema.Types.ObjectId,
+        ref:'client'
+        
+    },  
     growlers:[{
        
         type: Schema.Types.ObjectId,
