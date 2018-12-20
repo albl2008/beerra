@@ -25,8 +25,8 @@ async function checkTocken(req, res, next){
             next()
         }
     } catch (error) {
-        error.status=401
         next(error)
+        error.status=401
     }
     
 }
