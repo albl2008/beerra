@@ -10,4 +10,6 @@ api.get('/bottles/:idSale/',saleController.getBottle)
 api.get('/other/:idSale/',saleController.getOther)
 api.get('/containers/:idSale/',saleController.getContainer)
 api.get('/salesformonth', saleController.salesForMonth)
+api.get('/typesformonth', saleController.TypesForMonth)
+api.get('/litresformonth', saleController.litresForMonth)
 module.exports = api

@@ -192,7 +192,10 @@ async function getSales(req, res) {
 async function salesForMonth(req,res,next){
     try {    
         const sales = await Sale.aggregate(
-            [     {
+            [   
+               
+                 
+                {
                 $match:{
                     user: mongoose.Types.ObjectId(req.user._id)
                     }
@@ -203,6 +206,9 @@ async function salesForMonth(req,res,next){
                        count : { $sum : 1 }
                   }
                 },
+                {
+                    $sort: { "_id.month": 1}
+                }
             ]
         )
         if(sales){
@@ -213,6 +219,111 @@ async function salesForMonth(req,res,next){
     }
 }
 
+async function TypesForMonth(req,res,next){
+    try {    
+        const sales = await Sale.aggregate(
+           [
+             {
+                $match:{ user: mongoose.Types.ObjectId(req.user._id)}
+             },
+             {
+                  $group: {
+                           _id : { year: { $year : "$date" }, month: { $month : "$date" }}, 
+                           growlers:{$sum: {$size :"$growlers"}},
+                           pints:{$sum: {$size :"$pints"}},
+                           others:{$sum: {$size :"$others"}},
+                           bottles:{$sum: {$size :"$bottles"}},
+                          }
+             },
+             {
+                $sort: { "_id.month": 1}
+            }
+           ]
+        )
+        if(sales){
+            res.status(200).send({sales})
+        }
+    } catch (error) {
+       next(error)  
+    }
+}
+
+async function litresForMonth(req,res,next){
+    try {
+        
+        
+        const sales = await Sale.aggregate(
+            [
+                {
+                    $match: { user: mongoose.Types.ObjectId(req.user._id)}
+                },
+                
+                
+                {
+                    $lookup: {
+                        from: "others",
+                        localField: "others",
+                        foreignField: "_id",
+                        as: "others"
+                    }
+                },
+                {$unwind: {path:"$others",
+                preserveNullAndEmptyArrays: true}   
+            },
+            {
+                $lookup: {
+                    from: "pints",
+                    localField: "pints",
+                    foreignField: "_id",
+                    as: "pints"
+                }
+            },
+            {$unwind: {path:"$pints",
+            preserveNullAndEmptyArrays: true}
+        },
+        
+        {
+            $lookup: {
+                from: "growlers",
+                localField: "growlers",
+                foreignField: "_id",
+                as: "growlers"
+            }
+        },
+        {$unwind: {path:"$growlers",
+        preserveNullAndEmptyArrays: true}
+    },
+    
+    
+    {
+        $group:{ _id: {year:{$year:"$date"},month: { $month : "$date" }},
+        count:{ $sum: {
+            $add: [
+                { $ifNull: ["$pints.quantity", 0] },
+                { $ifNull: ["$others.quantity", 0] },
+                { $ifNull: ["$growlers.quantity", 0] }
+            ]      
+        }} ,
+        
+        
+    }
+},
+
+{
+    $sort: { "_id.month": 1}
+}
+
+]
+)
+
+if(sales){
+    res.status(200).send({sales})
+}
+} catch (error) {
+    next(error)
+}
+
+}
 module.exports = {
     createSale,
     getSales,
@@ -221,5 +332,7 @@ module.exports = {
     getBottle,
     getOther,
     getContainer,
-    salesForMonth
+    salesForMonth,
+    TypesForMonth,
+    litresForMonth
 }

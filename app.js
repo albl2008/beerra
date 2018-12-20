@@ -20,9 +20,9 @@ const auth = require('./Middelwares/auth1')
 app.use(morgan('dev')); 
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/',api);
 app.use(auth.checkTocken)
 
+app.use('/',api);
 
 app.use('/keg',auth.isLoggedIN,apiKeg);
 app.use('/payment',auth.isLoggedIN,apiPayment);
