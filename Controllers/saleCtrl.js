@@ -195,7 +195,7 @@ async function getSalesofClient(req, res) {
     res.status(200).send({
         Sales
     })
-
+}
 // Reportes
 
 async function salesForMonth(req,res,next){
@@ -332,17 +332,18 @@ if(sales){
     next(error)
 }
 
-}
-module.exports = {
-    createSale,
-    getSales,
-    getGrowler,
-    getPint,
-    getBottle,
-    getOther,
-    getContainer,
-    salesForMonth,
-    TypesForMonth,
-    litresForMonth
+    }
+    module.exports = {
+        createSale,
+        getSales,
+        getGrowler,
+        getPint,
+        getBottle,
+        getOther,
+        getContainer,
+        salesForMonth,
+        TypesForMonth,
+        litresForMonth,
+        getSalesofClient
 
-}
+    }
