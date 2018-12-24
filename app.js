@@ -38,7 +38,7 @@ app.use('/container',auth.isLoggedIN,apiContainer)
 app.use(errorHandling)
 
 function errorHandling(error,req,res,next){
-    console.log(error.message)
+
     res.status( error.status || 500)
     res.send(error.message)
 }
