@@ -13,7 +13,8 @@ function getbrewerys(req,res){
    })
 }*/
 const Brewery = require('../Models/brewery');
-
+const Keg = require('../Models/keg')
+const Bottle = require('../Models/bottle')
 async function updateBrewery(req, res){
 
     try {
@@ -33,33 +34,54 @@ async function updateBrewery(req, res){
   
 }
 
-async function deleteBrewery(req,res){
+async function deleteBrewery(req,res,next){
     try {
         let idBrewery = req.params.idBrewery
-        let brewery = await Brewery.findById(idBrewery)
-        if(!brewery)
-          return  res.status(404).send({mensaje:'Cerveceria a eliminar no existe'})
-        await brewery.remove()
-        res.status(200).send({mensaje:'Cerveceria eliminada correctamente'})
-
+        const verify = await verifyBrewery(idBrewery)
+        if(verify){
+            let brewery = await Brewery.findById(idBrewery)
+            if(!brewery)
+            return  res.status(404).send({mensaje:'Cerveceria a eliminar no existe'})
+            await brewery.remove()
+            res.status(200).send({mensaje:'Cerveceria eliminada correctamente'})
+        }else{
+            let err = new Error('No se puede eliminarla cerveceria tiene barriles o botellas.') 
+           err.status = 422 
+           next(err)
+        }
     } catch (err) {
         res.status(500).send({mensaje:`Error al eliminar el gasto ${err}`})
     }
 }
-function createBrewery(req,res){
-    let brewery = new Brewery();
-    brewery.name = req.body.name
-    brewery.contact = req.body.contact
-    brewery.address = req.body.address
-    brewery.user = req.user._id
-    brewery.save()
-        .then((breweryStoraged)=>{
-            res.status(200).send({brewery:breweryStoraged})
-        })
-        .catch((err)=>{
-            res.status(500).send(`Error al guardar brewery ${err}`)
-        })
+
+async function verifyBrewery(idBrewery){
+        const keg = Keg.findOne({brewery:idBrewery})
+        const bottle = Bottle.findOne({brewery:idBrewery})
+        if(keg){
+            return false
+        }else if(bottle){
+            return false
+        }else{
+            return true
+        }
+       
+}
+async function createBrewery(req,res,next){
+    try {
         
+        let brewery = new Brewery();
+        brewery.name = req.body.name
+        brewery.contact = req.body.contact
+        brewery.address = req.body.address
+        brewery.user = req.user._id
+        const breweryStoraged = await brewery.save()
+       
+        if(breweryStoraged){
+            res.status(200).send({message: "Cerveceria guardada correctamente"})
+        }
+    } catch (error) {
+        next(error)  
+    }
 
 
 }

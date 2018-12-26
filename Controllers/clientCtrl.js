@@ -1,5 +1,5 @@
 const Client = require('../Models/client');
-
+const Sale = require('../Models/sale')
 async function updateClient(req, res){
 
     try {
@@ -19,17 +19,32 @@ async function updateClient(req, res){
   
 }
 
-async function deleteClient(req,res){
+async function deleteClient(req,res, next){
     try {
         let idClient = req.params.idClient
+        let saleClient = await verifyClient(idClient)
+        if(saleClient){
         let client = await Client.findById(idClient)
         if(!client)
           return  res.status(404).send({mensaje:'Cerveceria a eliminar no existe'})
         await client.remove()
         res.status(200).send({mensaje:'Cerveceria eliminada correctamente'})
+        }else{
+           let err = new Error('No se puede eliminar el cliente ya que  tiene compras realizadas.') 
+           err.status = 422 
+           next(err)
 
+        }
     } catch (err) {
         res.status(500).send({mensaje:`Error al eliminar el gasto ${err}`})
+    }
+}
+async function verifyClient(idClient){
+    const client = await Sale.find({client:idClient})
+    if(Object.keys(client).length != 0){
+        return false
+    }else{
+        return true
     }
 }
 function createClient(req,res){

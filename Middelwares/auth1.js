@@ -10,23 +10,22 @@ async function checkTocken(req, res, next){
             const token = authHeader.split(' ')[1]
             if(token){
                 const user = await jwt.verify(token, config.TOKEN_SECRET)
-                console.log(user)
+               
                 if(user){
-                    req.user = user
-                    console.log(req.user)
+                    req.user = user    
                     next()
-                }else{
+                }else{      
                     next()
                 }
-            }else{
+            }else{     
                 next()
             }
-        }else{
+        }else{  
             next()
         }
     } catch (error) {
-        next(error)
         error.status=401
+        next(error)
     }
     
 }
