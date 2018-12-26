@@ -2,7 +2,7 @@ const Bottle = require('../Models/bottle');
 const Brewery = require('../Models/brewery')
 const BottleBuy = require('../Models/bottleBuy')
 const async = require ('async');
-
+const BottleSale = require('../Models/bottleSale')
 async function getBottles(req,res){
     try {
         console.log(req.user._id)
@@ -73,17 +73,38 @@ async function createBottle(req,res,next){
        next(err)
     }
 }
-async function deleteBottle(req,res){
+async function deleteBottle(req,res,next){
     try {
         let idBottle = req.params.idBottle
-        let bottle = await Bottle.findById(idBottle)
-        if(!bottle)
-            res.status(404).send({mensaje:'La(s) botella(s) a eliminar no existe(n)'})
-         await bottle.remove()
-        res.status(200).send({mensaje:'Botella(s) eliminada(s) correctamente'})
+        let bottleSaled = await verifyBottle(idBottle)
 
+        if(bottleSaled){
+            let bottle = await Bottle.findById(idBottle)
+            if(!bottle)
+            await bottle.remove()
+            res.status(200).send({mensaje:'Botella(s) eliminada(s) correctamente'})
+        }else{
+            console.log("aca entre")
+            let err = new Error('No es posible eliminar esta bottella ya que tiene ventas')
+            
+            next(err)
+        }
     } catch (err) {
         res.status(500).send({mensaje:`Error al eliminar la(s) botella(s) ${err}`})
+    }
+}
+async function verifyBottle(idBottle){
+    const bottleSale = await BottleSale.find({bottle: idBottle})
+    const bottleBuy =  await BottleBuy.find({bottle: idBottle})
+    if(Object.keys(bottleSale).length != 0){
+        console.log('venta',Object.keys(bottleSale).length)
+ 
+        return false
+    }else if (Object.keys(bottleBuy).length != 0){
+        console.log('compra',Object.keys(bottleBuy).length)
+        return false
+    }else{
+        return true
     }
 }
 async function updateBottle(req, res){
