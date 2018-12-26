@@ -66,7 +66,7 @@ async function verifyBrewery(idBrewery){
         }
        
 }
-async function createBrewery(req,res){
+async function createBrewery(req,res,next){
     try {
         
         let brewery = new Brewery();
