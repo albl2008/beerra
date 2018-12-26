@@ -18,6 +18,20 @@ async function getkegs(req,res){
    
    
 }
+async function getkegConnected(req,res){
+    try {
+        const Kegs = await Keg.find({ user: req.user._id, sta:4}).populate('brewery')
+
+        if(Object.keys(Kegs).length === 0)
+            return res.status(404).send({message:'No hay barriles'}); 
+        
+        res.status(200).send({Kegs})     
+    } catch (err) {
+        res.status(500).send(`${err}`);
+    }
+   
+   
+}
 async function getkeg(req,res){
     try {
         const keg = await Keg.findById(req.params.idKeg).populate('brewery')
@@ -192,6 +206,7 @@ async function started(req,res){
 }
 module.exports = {
     getkegs,
+    getkegConnected,
     createKeg,
     deleteKeg,
     updateKeg,

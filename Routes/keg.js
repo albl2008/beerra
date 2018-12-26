@@ -3,6 +3,7 @@ const api = express.Router();
 const kegCtrl = require('../Controllers/kegCtrl')
 
 api.get('/',kegCtrl.getkegs);
+api.get('/kegConnected',kegCtrl.getkegConnected);
 api.get('/:idKeg',kegCtrl.getkeg);
 api.post('/',kegCtrl.createKeg);
 api.delete('/:idKeg',kegCtrl.deleteKeg);
