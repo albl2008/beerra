@@ -11,7 +11,7 @@ api.get('/other/:idSale/',saleController.getOther)
 api.get('/containers/:idSale/',saleController.getContainer)
 api.get('/salesformonth', saleController.salesForMonth)
 api.get('/typesformonth', saleController.TypesForMonth)
-api.get('/litresformonth', saleController.litresForMonth)
+api.get('/litresformonth', saleController.prueba)
 api.get('/counter/:idClient/',saleController.getSalesofClient)
 
 

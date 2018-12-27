@@ -257,6 +257,118 @@ async function TypesForMonth(req,res,next){
     }
 }
 
+
+async function prueba(req,res,next){
+    const growlers = await Sale.aggregate(     [
+        {
+           $lookup: {
+               from: "growlers",
+               localField: "growlers",
+               foreignField: "_id",
+               as: "growlers"
+           }
+       },
+      
+       {$unwind: {path:"$growlers",
+       preserveNullAndEmptyArrays: true}
+       
+   },
+   
+
+{
+       $group:{ _id: {year:{$year:"$date"},month: { $month : "$date" }},
+       count:{ $sum: {
+           $add: [
+         
+               { $ifNull: ["$growlers.quantity", 0] }
+           ]      
+       }} ,
+       
+       
+       
+       
+   }},
+
+  
+   
+
+{
+   $sort: { "_id.month": 1}
+}
+])
+
+ const pints = await Sale.aggregate([
+    {
+       $lookup: {
+           from: "pints",
+           localField: "pints",
+           foreignField: "_id",
+           as: "pints"
+       }
+   },
+  
+   {$unwind: {path:"$pints",
+   preserveNullAndEmptyArrays: true}
+   
+},
+
+
+{
+   $group:{ _id: {year:{$year:"$date"},month: { $month : "$date" }},
+   count:{ $sum: {
+       $add: [
+     
+           { $ifNull: ["$pints.quantity", 0] }
+       ]      
+   }} ,
+   
+   
+   
+   
+}}])
+
+const others = await Sale.aggregate([
+    {
+       $lookup: {
+           from: "others",
+           localField: "others",
+           foreignField: "_id",
+           as: "others"
+       }
+   },
+  
+   {$unwind: {path:"$others",
+   preserveNullAndEmptyArrays: true}
+   
+},
+
+
+{
+   $group:{ _id: {year:{$year:"$date"},month: { $month : "$date" }},
+   count:{ $sum: {
+       $add: [
+     
+           { $ifNull: ["$others.quantity", 0] }
+       ]      
+   }} ,
+   
+   
+   
+   
+}},])
+
+res.status(200).send({
+    growlers,
+    pints,
+    others
+})
+}
+
+async function sumLitres (growlers,pints,others){
+    let total = []
+
+
+}
 async function litresForMonth(req,res,next){
     try {
         
@@ -332,7 +444,66 @@ if(sales){
     next(error)
 }
 
+async function salesBreweries(req,res,next){
+    let growlers = await Sale.aggregate([
+        {$unwind: {path:"$growlers",
+       preserveNullAndEmptyArrays: true}
+   },
+        {
+           $lookup: {
+               from: "growlers",
+               localField: "growlers",
+               foreignField: "_id",
+               as: "resultGrowlers"
+           }
+       },
+      
+       {$unwind: {path:"$resultGrowlers",
+       preserveNullAndEmptyArrays: true}
+       
+   },
+        {
+           $lookup: {
+               from: "kegs",
+               localField: "resultGrowlers.keg",
+               foreignField: "_id",
+               as: "kegs"
+           }
+       },
+       
+       
+       {$unwind: {path:"$kegs",
+       preserveNullAndEmptyArrays: true}
+       
+   },
+        {
+           $lookup: {
+               from: "breweries",
+               localField: "kegs.brewery",
+               foreignField: "_id",
+               as: "brewery"
+           }
+       },
+      
+   {
+       $group:{ _id: "$brewery.name",
+       count:{ $sum: {
+           $add: [
+         
+               { $ifNull: ["$resultGrowlers.quantity", 0] }
+           ]      
+       }} ,
+       
+       
+       
+       
+   }}
+        
+]) 
+}
+
     }
+
     module.exports = {
         createSale,
         getSales,
@@ -344,6 +515,10 @@ if(sales){
         salesForMonth,
         TypesForMonth,
         litresForMonth,
-        getSalesofClient
+        getSalesofClient,
+        prueba
 
     }
+
+
+   

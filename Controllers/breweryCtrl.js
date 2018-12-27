@@ -55,11 +55,12 @@ async function deleteBrewery(req,res,next){
 }
 
 async function verifyBrewery(idBrewery){
-        const keg = Keg.findOne({brewery:idBrewery})
-        const bottle = Bottle.findOne({brewery:idBrewery})
-        if(keg){
+        const keg = await Keg.find({brewery:idBrewery})
+        const bottle = await Bottle.find({brewery:idBrewery})
+        console.log(keg)
+        if(keg.length !== 0){
             return false
-        }else if(bottle){
+        }else if(bottle.length !== 0){
             return false
         }else{
             return true
