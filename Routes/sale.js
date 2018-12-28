@@ -12,6 +12,7 @@ api.get('/containers/:idSale/',saleController.getContainer)
 api.get('/salesformonth', saleController.salesForMonth)
 api.get('/typesformonth', saleController.TypesForMonth)
 api.get('/litresformonth', saleController.prueba)
+api.get('/litresforbrewery', saleController.litresForBrewery)
 api.get('/counter/:idClient/',saleController.getSalesofClient)
 
 
