@@ -25,7 +25,7 @@ async function updateBrewery(req, res){
         if(!breweryUpdated)
             res.status(404).send('El gasto a actualizar no existe')
         res.status(200).send({
-            mensaje:'gasto actualizado correctamente',
+            message:'Cerveceria actualizada correctamente',
             brewery: dataBrewery
         })
     } catch (error) {
