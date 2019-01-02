@@ -95,7 +95,7 @@ async function addBottleBuy(req,res){
             bottle.price = req.body.newPrice
                await bottle.save()
                await bottleBuy.save()
-        res.status(200).send({bottleBuy})
+        res.status(200).send({message : "Botella comprada correctamente"})
        
     } catch (err) {
 

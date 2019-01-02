@@ -66,7 +66,7 @@ async function createBottle(req,res,next){
        
         bottle.user = req.user._id
         const bottleStoraged = await bottle.save()
-        res.status(200).send({bottle:bottleStoraged})
+        res.status(200).send({message:"Botella creada correctamente"})
             
     } catch (err) {
 
