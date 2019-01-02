@@ -80,9 +80,10 @@ async function deleteBottle(req,res,next){
 
         if(bottleSaled){
             let bottle = await Bottle.findById(idBottle)
-            if(!bottle)
+            if(bottle){
             await bottle.remove()
             res.status(200).send({mensaje:'Botella(s) eliminada(s) correctamente'})
+            }
         }else{
             console.log("aca entre")
             let err = new Error('No es posible eliminar esta bottella ya que tiene ventas')
