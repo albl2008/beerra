@@ -249,7 +249,7 @@ async function deleteSale(req,res,next){
                 const bottleSale = await BottleSale.findById(element)
                 const bottle = await Bottle.findById(bottleSale.bottle)
                 if(bottle){
-                    bottle.stock += element.quantitySaled 
+                    bottle.stock += bottleSale.quantitySaled 
                     bottle.save()
                 }else{
                     let err = new Error("No se encontro la botella")
