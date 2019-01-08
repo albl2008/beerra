@@ -60,3 +60,96 @@ Relaciones de cerveceria :
             [X] Notificicación correcta de eliminacion
     [X] Si la cerveceria tiene relacion con algun elemmento prohibe la eliminacion
             [X] Notificicación correcta de prohibición de eliminacion
+
+
+            // TESTEO BOTELLAS
+
+[X] Carga de datos correctamente      
+        [X] Carga correcta de botella
+        [X] Notificacion de carga correcta
+[X] Carga de datos con campos vacios
+        [X] Campos obligatorios
+        [X] Notificacion de campos obligatorios
+[X] Carga de datos poniendo datos erroneos
+        [X] Campos erroneos
+        [X] Notificación de campos erroneos
+[X]Modificacion si no tiene stock
+        [X]No pregunta precio de venta 
+[X]Modificacion de datos correctos
+        [X]Modificacion correcta de datos
+        [X]Notificacion correcta de modificacion
+[x] Modificacion de datos vacios 
+        [x] Campos obligatorios
+        [x] Notificacion de campos obligatorios
+[X] modificacion de datos poniendo datos erroneos
+        [X] Campos erroneos
+        [X] Notificación de campos erroneos
+[X] Compra de botellas datos correctos
+        [X]Compra correcta
+        [X]Notificacion correcta
+[X] Compra de botellas mientras se esta editando
+        [X]no deja comprar botellas
+[X]Compra de botellas datos erroneos  
+        [X]notificacion de datos erroneos
+        
+// Relaciones   
+        *[X]Ventas
+        *[X]Compra de botellas
+
+[X]Eliminacion de Botellas        
+        [X]Eliminacion correcta
+        [X] pregunta de eliminacion de botellas
+        [X] notificacion de botella correcta
+[X] Eliminacion de botella si tiene ventas
+        [X]Notificacion de botella con ventas
+        [X]imposibilidad de eliminacion
+[X]Eliminacion de botella si se esta editando
+        [X]Notificacion de finalizacion de edicion
+        [X]Imposibilidad de eliminacion
+
+
+            // TESTEO BARRILES
+
+[X] Carga de datos correctamente      
+        [X] Carga correcta de barril
+        [X] Notificacion de carga correcta
+[X] Carga de datos con campos vacios
+        [X] Campos obligatorios
+        [X] Notificacion de campos obligatorios
+[X] Carga de datos poniendo datos erroneos
+        [X] Campos erroneos
+        [X] Notificación de campos erroneos
+
+[X]Modificacion de datos correctos
+        [X]Modificacion correcta de datos
+        [X]Notificacion correcta de modificacion
+[X] Modificacion de datos vacios 
+        [X] Campos obligatorios
+        [X] Notificacion de campos obligatorios
+[X] modificacion de datos poniendo datos erroneos
+        [X] Campos erroneos
+        [X] Notificación de campos erroneos
+[X] Modificacion de estado si el barril ya tiene ventas
+        [X]No muestra cambio de estado
+[X] Moficacion de barril vacio
+        [X]No muestra cambio de estado
+[X] Conexion de barril vacio    
+        [X]No deja conectar  barril
+[X] Conexion de barril mientras esta editando
+        [X]no deja conectar barril
+[X] Desconexion de barril mientras se esta editando
+        [X]no deja desconectar barril
+
+// Relaciones   
+        *[X]Ventas
+
+[X]Eliminacion de barril        
+        [X] pregunta de eliminacion de barril
+        [X] notificacion de barril correcta
+[X] Eliminacion de barril si tiene ventas
+        [X]Notificacion de barril con ventas
+        [X]imposibilidad de eliminacion
+[X]Eliminacion de barril si se esta editando
+        [X]Notificacion de finalizacion de edicion
+        [X]Imposibilidad de eliminacion
+

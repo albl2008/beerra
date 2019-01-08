@@ -3,6 +3,7 @@ const api = express.Router()
 const saleController = require('../Controllers/saleCtrl')
 
 api.post('/',saleController.createSale)
+api.delete('/:idSale',saleController.deleteSale)
 api.get('/',saleController.getSales)
 api.get('/growlers/:idSale/',saleController.getGrowler)
 api.get('/pints/:idSale/',saleController.getPint)
