@@ -10,7 +10,12 @@ const userSchema = new Schema({
   password: {type: String,select:false},
   secretToken:String,
   verify: {type: Boolean, default:false},
-  resetToken:String
+  resetToken:String,
+  payToken: String,
+  super: {
+    type:Boolean,
+    default:false
+  }
   
 });
 

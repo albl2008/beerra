@@ -37,13 +37,17 @@ async function signUp(req,res,next){
                 //validation secret token
                 token = await bcrypt.hash(config.VALIDATE_USER,10)
                 // insert the user with the hashed paswsword
-               const newUser = new User({
+               let newUser = new User({
                    username: req.body.username,
                    password: hashedPassword,
                    email:req.body.email,
-                   secretToken: token
+                   secretToken: token,
+                
                })
-              const insertedUser = await newUser.save()
+
+             
+                newUser.payToken = await createPayToken(newUser,'30d')
+                const insertedUser = await newUser.save()
                 if(insertedUser){
                     const mailOptions = {
                         from: 'marianobuglio@gmail.com', // sender address
@@ -127,6 +131,17 @@ async function createTokenSendResponse(user, res, next){
        next(error)
    }
    
+}
+async function createPayToken(user,time){
+    
+    const payload = {
+        
+        username: user.username
+       }
+       const token = await jwt.sign(payload,config.TOKEN_SECRET,{
+           expiresIn: time
+       })
+       return token  
 }
 async function verify(req,res,next){
     try {
@@ -223,6 +238,7 @@ async function ResetTokenSendEmail(req,res,next){
         next(error)
     }
 }
+
 async function newPassword(req,res,next){
         try {
             const token = req.body.token
@@ -292,11 +308,27 @@ async function sendUserName(req,res,next){
         next(err)
     }
 }
+async function getUsers (req,res){
+    try {
+        
+        const users = await User.find({})
+        if(Object.keys(users).length > 0){
+            res.status(200).send(users)
+        }else{
+            let err = new Error('El sistema aun no tiene usuarios registrados')
+            err.status = 400
+            next(err)
+        }
+    } catch (error) {
+        next(error)
+    }
+}
 module.exports = {
     signUp,
     signIn,
     verify,
     ResetTokenSendEmail,
     newPassword,
-    sendUserName
+    sendUserName,
+    getUsers
 }

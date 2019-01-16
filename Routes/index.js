@@ -2,8 +2,8 @@ const express = require('express');
 const api = express.Router();
 const auth=require('../Middelwares/auth1');
 const userCtrl=require('../Controllers/userCtrl');
-
-
+const payToken = require('../Middelwares/authPayToken')
+const admin = require('../Middelwares/adminUser')
 
 
 api.get('/',auth.checkTocken,(req,res)=>{
@@ -11,12 +11,12 @@ api.get('/',auth.checkTocken,(req,res)=>{
 });
 
 api.post('/signup',userCtrl.signUp )
-api.post('/signin',userCtrl.signIn)
+api.post('/signin',payToken.checkPayToken,userCtrl.signIn)
 api.post('/verify',userCtrl.verify)
 api.post('/resetPassword',userCtrl.ResetTokenSendEmail)
 api.post('/newPassword/',userCtrl.newPassword)
 api.post('/recoverUsername',userCtrl.sendUserName)
-
+api.get('/admin',admin.adminUser,userCtrl.getUsers)
 /*api.get('/private',auth,function(req,res){
     res.status(200).send({message:'tienes acceso'});
 });
