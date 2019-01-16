@@ -196,6 +196,93 @@ async function getSalesofClient(req, res) {
         Sales
     })
 }
+
+async function deleteSale(req,res,next){
+ try {
+     const sale = await Sale.findById(req.params.idSale)
+     if(sale){
+        if(Object.keys(sale.growlers).length > 0){
+            for(element of sale.growlers ){
+                const growler = await Growler.findById(element)
+                const keg = await Keg.findById(growler.keg)
+                if(keg){
+                    keg.quantitySaled += growler.quantity 
+                    await keg.save()
+                }else{
+                    let err = new Error("No se encontro el barril")
+                    err.status = 404
+                    next(err)
+                }
+            }
+        }
+        if(Object.keys(sale.pints).length > 0){
+            console.log('Entre en las pintas')
+            for(element of sale.pints ){
+                const pint = await Pint.findById(element)
+                const keg = await Keg.findById(pint.keg)
+                if(keg){
+                    keg.quantitySaled += pint.quantity 
+                    await keg.save()
+                }else{
+                    let err = new Error("No se encontro el barril")
+                    err.status = 404
+                    next(err)
+                }
+            }
+        }
+        if(Object.keys(sale.others).length > 0){
+            for(element of sale.others){
+                const other = await Other.findById(element)
+                const keg = await Keg.findById(other.keg)
+                if(keg){
+                    keg.quantitySaled += other.quantity 
+                    await keg.save()
+                }else{
+                    let err = new Error("No se encontro el barril")
+                    err.status = 404
+                    next(err)
+                }
+            }
+        }
+        if(Object.keys(sale.bottles).length > 0){
+            for(element of sale.bottles){
+                const bottleSale = await BottleSale.findById(element)
+                const bottle = await Bottle.findById(bottleSale.bottle)
+                if(bottle){
+                    bottle.stock += bottleSale.quantitySaled 
+                    bottle.save()
+                }else{
+                    let err = new Error("No se encontro la botella")
+                    err.status = 404
+                    next(err)
+                }
+            }
+        }
+        if(Object.keys(sale.containers).length > 0){
+            for(element of sale.containers){
+                const containerSale = await ContainerSale.findById(element)
+                const container = await Container.findById(containerSale.container)
+                if(container){
+                    container.stock += element.quantitySaled 
+                    container.save()
+                }else{
+                    let err = new Error("No se encontro la botella")
+                    err.status = 404
+                    next(err)
+                }
+            }
+        }
+        await sale.remove()
+        res.status(202).send({message:'Venta eliminada correctamente'})
+     }else{
+        let err = new Error("No se encontro la venta a eliminar")
+        err.status = 404
+        next(err)
+     }
+ } catch (error) {
+     next(error)
+ }   
+}
 // Reportes
 
 async function salesForMonth(req,res,next){
@@ -631,6 +718,7 @@ const others = await Sale.aggregate([
 }
     module.exports = {
         createSale,
+        deleteSale,
         getSales,
         getGrowler,
         getPint,
