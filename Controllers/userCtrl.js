@@ -157,7 +157,7 @@ async function createPayToken(user,time){
         username: user.username
        }
        const token = await jwt.sign(payload,config.TOKEN_SECRET,{
-           expiresIn: time+"h"
+           expiresIn: time+"d"
        })
        return token  
 }
