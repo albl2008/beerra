@@ -17,6 +17,8 @@ api.post('/resetPassword',userCtrl.ResetTokenSendEmail)
 api.post('/newPassword/',userCtrl.newPassword)
 api.post('/recoverUsername',userCtrl.sendUserName)
 api.get('/admin',admin.adminUser,userCtrl.getUsers)
+api.post('/payToken/:idUser',admin.adminUser,userCtrl.newPayToken)
+
 /*api.get('/private',auth,function(req,res){
     res.status(200).send({message:'tienes acceso'});
 });

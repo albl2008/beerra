@@ -46,7 +46,7 @@ async function signUp(req,res,next){
                })
 
              
-                newUser.payToken = await createPayToken(newUser,'30d')
+                newUser.payToken = await createPayToken(newUser,'30')
                 const insertedUser = await newUser.save()
                 if(insertedUser){
                     const mailOptions = {
@@ -68,7 +68,25 @@ async function signUp(req,res,next){
             e.status = 422
             next(e)
         }
-    }    
+    }   
+    async function newPayToken(req,res,next){
+        try {
+            let user = await User.findOne({_id:req.params.idUser})
+            if(user){
+                console.log(req.body)
+                user.payToken = await createPayToken(user,req.body.time)
+                await user.save()
+                res.status(200).send({message:"Token creado correctamente"})
+
+            }else{
+                let err = new Error("No se encontro el usuario buscado")
+                next(err)
+            }
+        } catch (error) {
+            next(error)
+        }
+
+    } 
 async function signIn(req,res,next){
     try {
         
@@ -139,7 +157,7 @@ async function createPayToken(user,time){
         username: user.username
        }
        const token = await jwt.sign(payload,config.TOKEN_SECRET,{
-           expiresIn: time
+           expiresIn: time+"h"
        })
        return token  
 }
@@ -330,5 +348,6 @@ module.exports = {
     ResetTokenSendEmail,
     newPassword,
     sendUserName,
-    getUsers
+    getUsers,
+    newPayToken
 }
