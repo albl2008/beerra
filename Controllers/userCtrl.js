@@ -14,6 +14,8 @@ const email =Joi.object().keys({
     email: Joi.string().email().required()
 })
 async function signUp(req,res,next){
+    try {
+        
         console.log(req.body)
         const result = Joi.validate(req.body, schema);
         if(result.error === null){ 
@@ -68,6 +70,9 @@ async function signUp(req,res,next){
             e.status = 422
             next(e)
         }
+    } catch (error) {
+        next(error)
+    }
     }   
     async function newPayToken(req,res,next){
         try {
@@ -199,8 +204,8 @@ async function sendEmail(user,mailOptions){
 
       transporter.sendMail(mailOptions, function (err, info) {
         if(err){
-            const error = new Error('Error al envia el mail intentelo mas tarde')
-          next(error)
+        const error = new Error('Error al envia el mail intentelo mas tarde')
+         
         }
         else
           return true
@@ -326,7 +331,7 @@ async function sendUserName(req,res,next){
         next(err)
     }
 }
-async function getUsers (req,res){
+async function getUsers (req,res,next){
     try {
         
         const users = await User.find({})
