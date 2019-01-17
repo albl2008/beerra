@@ -55,7 +55,7 @@ async function signUp(req,res,next){
                         from: 'marianobuglio@gmail.com', // sender address
                         to: insertedUser.email, // list of receivers
                         subject:'Verificacion de usuario' , // Subject line
-                        html: `Ingrese el  token: <strong>${insertedUser.secretToken}</strong> en el siguiente formulario <a href="http://localhost:8080/#/verify">Verificar Cuenta</a> 🍻 `// plain text body
+                        html: `Ingrese el  token: <strong>${insertedUser.secretToken}</strong> en el siguiente formulario <a href="http://157.230.154.101/#/verify">Verificar Cuenta</a> 🍻 `// plain text body
                       };
                     if(sendEmail(insertedUser,mailOptions)){
                         res.status(200).send({
