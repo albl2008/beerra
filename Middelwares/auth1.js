@@ -10,7 +10,7 @@ async function checkTocken(req, res, next){
             const token = authHeader.split(' ')[1]
             if(token){
                 const user = await jwt.verify(token, config.TOKEN_SECRET)
-               
+             
                 if(user){
                     req.user = user    
                     next()
@@ -25,6 +25,7 @@ async function checkTocken(req, res, next){
         }
     } catch (error) {
         error.status=401
+        error.message = "El token expiro inicie secion nuevamente"
         next(error)
     }
     

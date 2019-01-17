@@ -37,13 +37,17 @@ async function signUp(req,res,next){
                 //validation secret token
                 token = await bcrypt.hash(config.VALIDATE_USER,10)
                 // insert the user with the hashed paswsword
-               const newUser = new User({
+               let newUser = new User({
                    username: req.body.username,
                    password: hashedPassword,
                    email:req.body.email,
-                   secretToken: token
+                   secretToken: token,
+                
                })
-              const insertedUser = await newUser.save()
+
+             
+                newUser.payToken = await createPayToken(newUser,'30')
+                const insertedUser = await newUser.save()
                 if(insertedUser){
                     const mailOptions = {
                         from: 'marianobuglio@gmail.com', // sender address
@@ -64,7 +68,25 @@ async function signUp(req,res,next){
             e.status = 422
             next(e)
         }
-    }    
+    }   
+    async function newPayToken(req,res,next){
+        try {
+            let user = await User.findOne({_id:req.params.idUser})
+            if(user){
+                console.log(req.body)
+                user.payToken = await createPayToken(user,req.body.time)
+                await user.save()
+                res.status(200).send({message:"Token creado correctamente"})
+
+            }else{
+                let err = new Error("No se encontro el usuario buscado")
+                next(err)
+            }
+        } catch (error) {
+            next(error)
+        }
+
+    } 
 async function signIn(req,res,next){
     try {
         
@@ -127,6 +149,17 @@ async function createTokenSendResponse(user, res, next){
        next(error)
    }
    
+}
+async function createPayToken(user,time){
+    
+    const payload = {
+        
+        username: user.username
+       }
+       const token = await jwt.sign(payload,config.TOKEN_SECRET,{
+           expiresIn: time+"d"
+       })
+       return token  
 }
 async function verify(req,res,next){
     try {
@@ -223,6 +256,7 @@ async function ResetTokenSendEmail(req,res,next){
         next(error)
     }
 }
+
 async function newPassword(req,res,next){
         try {
             const token = req.body.token
@@ -292,11 +326,28 @@ async function sendUserName(req,res,next){
         next(err)
     }
 }
+async function getUsers (req,res){
+    try {
+        
+        const users = await User.find({})
+        if(Object.keys(users).length > 0){
+            res.status(200).send(users)
+        }else{
+            let err = new Error('El sistema aun no tiene usuarios registrados')
+            err.status = 400
+            next(err)
+        }
+    } catch (error) {
+        next(error)
+    }
+}
 module.exports = {
     signUp,
     signIn,
     verify,
     ResetTokenSendEmail,
     newPassword,
-    sendUserName
+    sendUserName,
+    getUsers,
+    newPayToken
 }
