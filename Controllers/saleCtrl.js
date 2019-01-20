@@ -602,7 +602,9 @@ async function litresForBrewery(req, res, next){
         
 ])
 const growlers = await Sale.aggregate([
-      
+    {
+        $match:{ user: mongoose.Types.ObjectId(req.user._id)}
+     },
     {$unwind: {path:"$growlers",
    preserveNullAndEmptyArrays: true}
 },
