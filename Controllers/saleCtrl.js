@@ -9,13 +9,13 @@ const Container = require('../Models/container')
 const ContainerSale = require('../Models/containerSale')
 const format = require('date-format')
 const mongoose = require('mongoose')
-async function createSale(req, res) {
-   
+const moment = require('moment-timezone')
+async function createSale(req, res) { 
     try {
         let sale = new Sale()
         sale.client = req.body.client
         sale.totalSale = req.body.totalSale
-        sale.date =  req.body.date  
+        sale.date =  moment(req.body.date).tz('America/Argentina/Mendoza')
         sale.user = req.user._id
         let saleStoraged = await sale.save()
         saleStoraged = saveProducts(req.body.growlers, req.body.bottles, req.body.pints, req.body.others,saleStoraged,req.body.containers)
@@ -718,6 +718,36 @@ const others = await Sale.aggregate([
     res.status(200).send({pints,growlers,others})
 
 }
+
+async function totalSales(req,res){
+   
+    let day = moment(req.body.day).format("YYYY-MM-DD");
+    let finalDay = moment(day).add(1,'days').format("YYYY-MM-DD")
+
+console.log(day)
+console.log(finalDay)
+    
+    const totalSale = await Sale.aggregate([
+        {
+           
+            $match:{date: {"$gte": new Date(day), "$lt": new Date(finalDay)},  user: mongoose.Types.ObjectId(req.user._id)}
+        },
+        { 
+        $group: { 
+            _id: null, 
+            total: { 
+                $sum: "$totalSale" 
+            } 
+        } 
+    }
+    ])
+    
+    if(totalSale){
+        res.status(200).send({
+            total:totalSale[0].total
+        })
+    }
+}
     module.exports = {
         createSale,
         deleteSale,
@@ -732,7 +762,8 @@ const others = await Sale.aggregate([
         litresForMonth,
         getSalesofClient,
         prueba,
-        litresForBrewery
+        litresForBrewery,
+        totalSales
 
     }
 

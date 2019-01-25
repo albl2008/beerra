@@ -15,7 +15,7 @@ api.get('/typesformonth', saleController.TypesForMonth)
 api.get('/litresformonth', saleController.prueba)
 api.get('/litresforbrewery', saleController.litresForBrewery)
 api.get('/counter/:idClient/',saleController.getSalesofClient)
-
+api.post('/totalDay',saleController.totalSales)
 
 
 module.exports = api
