@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const config = require('../config')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer');
-
+const moment = require('moment-timezone')
 const schema = Joi.object().keys({
     username: Joi.string().alphanum().min(3).max(30).required(),
     password: Joi.string().min(8).trim().required(),
@@ -92,6 +92,27 @@ async function signUp(req,res,next){
         }
 
     } 
+    async function expired(req,res,next){
+        try {
+            const user = await  User.findById(req.user._id)
+            if(user){
+                    const payload = await jwt.verify(user.payToken,config.TOKEN_SECRET)  
+                    if(payload){
+                        const d = new Date(0)
+                        d.setUTCSeconds(payload.exp)
+                        
+                        res.status(200).send({date:moment(d).tz('UTC').format('DD/MM/YYYY')})
+                    }
+            }else{
+                let err = new Error('No se encontro el usuario')
+                err.status = 404
+                next(err)
+            }
+        } catch (error) {
+            console.log(error)
+            next(error)
+        }
+    }
 async function signIn(req,res,next){
     try {
         
@@ -354,5 +375,6 @@ module.exports = {
     newPassword,
     sendUserName,
     getUsers,
-    newPayToken
+    newPayToken,
+    expired
 }
