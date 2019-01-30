@@ -3,6 +3,7 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const apiKeg = require('./Routes/keg');
+const apiCash = require('./Routes/cash')
 const apiPricize = require('./Routes/pricize')
 const apiBrewery = require('./Routes/brewery')
 const apiPipe = require('./Routes/pipe');
@@ -26,6 +27,7 @@ app.use(auth.checkTocken)
 app.use('/',api);
 
 app.use('/keg',auth.isLoggedIN,apiKeg);
+app.use('/cash',auth.isLoggedIN,apiCash);
 app.use('/payment',auth.isLoggedIN,apiPayment);
 app.use('/outflow',apiOutflow);
 app.use('/bottle',auth.isLoggedIN,apiBottle);
