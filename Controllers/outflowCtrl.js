@@ -2,7 +2,7 @@ const Outflow = require('../Models/outflow');
 const Container = require('../Models/container');
 const BottleBuy = require('../Models/bottleBuy');
 const Bottle = require('../Models/bottle');
-
+const Out = require('../Models/coutFlow')
 
 async function getOutflows(req,res){
     try {
@@ -35,7 +35,7 @@ async function getOutflow(req,res){
    
 }
 
-async function addOutflow(req,res){
+async function addOutflow(req,res,next){
     
     try {
         
@@ -67,12 +67,45 @@ async function addOutflow(req,res){
         outflow.date = req.body.date
         outflow.user = req.user._id
         const outflowStoraged = await outflow.save()
+
+        //Registro de gasto 
+        let out = new Out()
+        out.outflow = outflow._id
+        out.amount = await totalOut(outflow)
+        out.description = await typeOfdescription(outflow.type)
+        out.date = outflow.date
+        await out.save()
+
         res.status(200).send({outflow:outflowStoraged})
        
     } catch (err) {
-
-        res.status(500).send(`Error al guardar el gasto ${err}`)
+        console.log(err)
+            next(err)
     }
+}
+async function totalOut(outflow){
+    if(outflow.type === 5 || outflow.type === 6 || outflow.type === 7 || outflow.type === 3 ){
+        return (outflow.price)
+    }
+    else{
+        return (outflow.price * ourflow.quantity)
+    }
+}
+async function typeOfdescription(type){
+    if(type === 1)
+        return "Compras pintas"
+    if(type === 2)
+        return "Compras botellones"
+    if(type === 3)
+        return "Compra de limpieza"
+    if(type === 4)
+        return "Compra de CO2"
+    if(type === 5)
+        return "Alquiler"
+    if(type === 6)
+        return "Luz"
+    if(type === 7)
+        return "Otros"
 }
 async function addBottleBuy(req,res){
     

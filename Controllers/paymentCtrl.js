@@ -1,6 +1,6 @@
 const Payment = require('../Models/payment');
 const Keg = require('../Models/keg')
-
+const Out = require('../Models/coutFlow')
 
 
 async function getPayments(req, res) {
@@ -40,7 +40,15 @@ async function addPayment(req,res){
         payment.brewery = req.body.brewery
         payment.user = req.user._id
         const paymentStoraged = await payment.save()
-        
+
+        // registro como gasto de caja
+        let outflow = new Out()
+        outflow.payment = payment._id
+        outflow.amount = payment.ammount
+        outflow.description = "Pago de barril a: " + payment.brewery 
+        outflow.date = payment.date
+        await outflow.save()
+
         res.status(200).send({payment:paymentStoraged})
     } catch (err) {
 

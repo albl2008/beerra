@@ -5,20 +5,34 @@ const Other = require('../Models/other')
 const Keg = require('../Models/keg')
 const Bottle = require('../Models/bottle')
 const BottleSale = require('../Models/bottleSale')
+const Inflow = require('../Models/inflow')
 const Container = require('../Models/container')
 const ContainerSale = require('../Models/containerSale')
 const format = require('date-format')
 const mongoose = require('mongoose')
 const moment = require('moment-timezone')
+
 async function createSale(req, res) { 
     try {
+
         let sale = new Sale()
         sale.client = req.body.client
         sale.totalSale = req.body.totalSale
         sale.date =  moment(req.body.date).tz('America/Argentina/Mendoza')
         sale.user = req.user._id
         let saleStoraged = await sale.save()
+        sale._id = saleStoraged._id
+        //Guardo productos de la venta
         saleStoraged = saveProducts(req.body.growlers, req.body.bottles, req.body.pints, req.body.others,saleStoraged,req.body.containers)
+        
+        //Cargo ingreso a la caja
+        let inflow = new Inflow();
+        inflow.sale = sale._id
+        inflow.amount = sale.totalSale
+        inflow.description = "Venta cerveza"
+        inflow.date = sale.date
+        await inflow.save()
+
         res.status(200).send({
             message: "Venta realizada correctamente",
 
