@@ -12,8 +12,11 @@ const outflowSchema = new Schema({
     payment:{
         type: Schema.Types.ObjectId,
         ref: 'payment'
+    },
+    user:{
+        type: Schema.Types.ObjectId,
+        ref: 'user1'
     }
-
 })
 
 const CoutFlow = mongoose.model('coutflow', outflowSchema)

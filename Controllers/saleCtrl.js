@@ -31,6 +31,7 @@ async function createSale(req, res) {
         inflow.amount = sale.totalSale
         inflow.description = "Venta cerveza"
         inflow.date = sale.date
+        inflow.user = req.user._id
         await inflow.save()
 
         res.status(200).send({
@@ -286,6 +287,7 @@ async function deleteSale(req,res,next){
                 }
             }
         }
+        await Inflow.findOneAndDelete({sale: sale._id})
         await sale.remove()
         res.status(202).send({message:'Venta eliminada correctamente'})
      }else{

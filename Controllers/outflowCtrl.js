@@ -74,6 +74,7 @@ async function addOutflow(req,res,next){
         out.amount = await totalOut(outflow)
         out.description = await typeOfdescription(outflow.type)
         out.date = outflow.date
+        out.user = req.user._id
         await out.save()
 
         res.status(200).send({outflow:outflowStoraged})
@@ -88,7 +89,7 @@ async function totalOut(outflow){
         return (outflow.price)
     }
     else{
-        return (outflow.price * ourflow.quantity)
+        return (outflow.price * outflow.quantity)
     }
 }
 async function typeOfdescription(type){
@@ -135,17 +136,21 @@ async function addBottleBuy(req,res){
         res.status(500).send(`Error al guardar el gasto ${err}`)
     }
 }
-async function deleteOutflow(req,res){
+async function deleteOutflow(req,res,next){
     try {
         let idOutflow = req.params.idOutflow
         let outflow = await Outflow.findById(idOutflow)
-        if(!outflow)
-            res.status(404).send({mensaje:'El gasto a eliminar no existe'})
+        if(!outflow){
+            let err = new Error("No se encontro el gasto a eliminar") 
+            err.status = 404
+            next(err)
+        }
+         await Out.findOneAndDelete({outflow: outflow._id})
          await outflow.remove()
-        res.status(200).send({mensaje:'gasto eliminado correctamente'})
+         res.status(200).send({mensaje:'gasto eliminado correctamente'})
 
     } catch (err) {
-        res.status(500).send({mensaje:`Error al eliminar el gasto ${err}`})
+        next(err)
     }
 }
 async function updateOutflow(req, res){

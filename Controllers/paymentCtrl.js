@@ -47,6 +47,7 @@ async function addPayment(req,res){
         outflow.amount = payment.ammount
         outflow.description = "Pago de barril a: " + payment.brewery 
         outflow.date = payment.date
+        outflow.user = req.user._id
         await outflow.save()
 
         res.status(200).send({payment:paymentStoraged})

@@ -9,6 +9,10 @@ const inflowSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'sale'
     },
+    user:{
+        type: Schema.Types.ObjectId,
+        ref: 'user1'
+    }
 })
 
 const Inflow = mongoose.model('inflow', inflowSchema)
