@@ -676,7 +676,9 @@ const growlers = await Sale.aggregate([
     
 ])
 const others = await Sale.aggregate([
-      
+    {
+        $match:{ user: mongoose.Types.ObjectId(req.user._id)}
+     },
     {$unwind: {path:"$others",
    preserveNullAndEmptyArrays: true}
 },
