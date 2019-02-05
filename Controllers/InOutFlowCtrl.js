@@ -9,7 +9,7 @@ async function addInflow(req,res,next){
         inflow.amount = req.body.amount
         inflow.description = req.body.description
         inflow.date = req.body.date
-        inflow.user = req.user
+        inflow.user = req.user._id
         await inflow.save()
         res.status(200).send({message:"Ingreso registrado correctamente"})
     } catch (error) {
@@ -95,7 +95,8 @@ async function getOUT(req,res,next){
 
 async function responseTotal(req,res,next){
     try {
-        const total = await calculateTotal()
+        const total = await calculateTotal(req)
+        console.log("Total",total)
         res.status(200).send({total})
     } catch (error) {
         console.log(error)
@@ -103,6 +104,7 @@ async function responseTotal(req,res,next){
     }
 }
 async function responseTotalMonth(req,res,next){
+    console.log(req.user)
     try {
        const ins = await In.aggregate([
         {
@@ -120,8 +122,7 @@ async function responseTotalMonth(req,res,next){
              count:{ $sum: "$amount"} ,
               }}
           ])
-          console.log(outs)
-          console.log(ins)
+        
               res.status(200).send({
                   outs:outs,
                   ins: ins  
@@ -165,23 +166,26 @@ const totalIn = await In.aggregate([
     ])
     let totalDay
     if(Object.keys(totalIn).length > 0 && Object.keys(totalOut).length > 0 ){   
-        console.log(totalIn)
-        console.log(totalOut)
         totalDay =  (totalIn[0].total - totalOut[0].total)
-    }else if(Object.keys(totalIn).length <= 0){
-        totalDay =  (0 - totalOut[0].total)
+    }else if(Object.keys(totalIn).length <= 0  && Object.keys(totalOut).length <= 0){
+        totalDay =  0
     }else if (Object.keys(totalOut).length <= 0){
-        totalDay = (totalIn[0].total - 0)
-    }else{
+        totalDay = totalIn[0].total
+    }else if (Object.keys(totalIn).length <= 0){
+        totalDay = ( - totalOut[0].total )
+    }
+    else{
         totalDay = 0
     }
     console.log(totalDay)
     res.status(200).send({totalDay})
 }
 
-async function calculateTotal(){
-    const ins = await In.find({})
-    const outs = await Out.find({})
+async function calculateTotal(req){
+    const ins = await In.find({user: req.user._id})
+    const outs = await Out.find({user: req.user._id})
+    console.log("Entradas",ins)
+    console.log("Salidas",outs)
     let totalIN = 0
     let totalOut = 0
     
@@ -192,11 +196,12 @@ async function calculateTotal(){
         for(element of outs){
             totalOut += element.amount
         }
-         return totalIN - totalOut
+         return (totalIN - totalOut)
     }else if(Object.keys(ins).length > 0 && Object.keys(ins).length <= 0){
         for(element of ins){
             totalIN += element.amount
         }
+
         return  totalIN
     }else if(Object.keys(ins).length <= 0 && Object.keys(ins).length > 0){
         for(element of outs){
