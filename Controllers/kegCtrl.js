@@ -57,6 +57,7 @@ async function createKeg(req,res){
         let keg = new Keg();
         keg.beer = req.body.beer
         keg.sta = req.body.sta
+        keg.nkeg = req.body.nkeg
         if(keg.sta === 2) 
             keg.quantitySaled = req.body.quantitySaled 
         else
@@ -65,6 +66,7 @@ async function createKeg(req,res){
         keg.ibu = req.body.ibu
         keg.alcohol = req.body.alcohol;
         keg.brewery = req.body.brewery;
+        keg.srm = req.body.srm
         keg.user = req.user._id
         const kegStoraged = await keg.save()
         res.status(200).send({keg:kegStoraged})

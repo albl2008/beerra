@@ -10,7 +10,9 @@ const kegSchema = new Schema({
   quantitySaled: Number,
   sta: Number,
   ibu: Number,
+  srm : String,
   alcohol: Number,
+  nkeg: Number,
   brewery: {
     type: Schema.Types.ObjectId,
     ref: 'brewery'

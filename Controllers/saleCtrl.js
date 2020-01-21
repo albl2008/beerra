@@ -18,16 +18,18 @@ async function createSale(req, res) {
         let sale = new Sale()
         sale.client = req.body.client
         sale.totalSale = req.body.totalSale
+        sale.postnet = req.body.postnet
         sale.date =  moment(req.body.date).tz('America/Argentina/Mendoza')
         sale.user = req.user._id
         let saleStoraged = await sale.save()
         sale._id = saleStoraged._id
         //Guardo productos de la venta
-        saleStoraged = saveProducts(req.body.growlers, req.body.bottles, req.body.pints, req.body.others,saleStoraged,req.body.containers)
+        saleStoraged = saveProducts(req.body.growlers, req.body.postnet ,req.body.bottles, req.body.pints, req.body.others,saleStoraged,req.body.containers)
         
         //Cargo ingreso a la caja
         let inflow = new Inflow();
         inflow.sale = sale._id
+        inflow.postnet = sale.postnet
         inflow.amount = sale.totalSale
         inflow.description = "Venta cerveza"
         inflow.date = sale.date
@@ -42,6 +44,18 @@ async function createSale(req, res) {
         res.status(500).send(`Error al procesar la venta  ${error}`)
     }
 } 
+async function totalPostnet(req,res){
+    try {
+        let totalPostnet = await Inflow.find({"sale":req.params.idSale},{"postnet":true})
+        let ventasP = await Sale.find({"sale":req.params.idSale},{"postnet":true})
+        if(!ventasP && !totalPostnet)
+            res.status(404).send({mensaje:"La venta fue en efectivo"})
+        res.status(200).send({ventasP})
+    } catch (error) {
+        res.status(500).send(`Error al buscar la venta  ${error}`)
+        console.log(error)
+    }
+}
 async function getGrowler(req,res){
     try {
         let growlers = await Growler.find({"sale":req.params.idSale}).populate('keg')
@@ -772,6 +786,7 @@ console.log(finalDay)
         getSales,
         getGrowler,
         getPint,
+        totalPostnet,
         getBottle,
         getOther,
         getContainer,

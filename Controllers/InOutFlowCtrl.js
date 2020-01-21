@@ -5,11 +5,12 @@ const mongoose = require('mongoose')
 async function addInflow(req,res,next){
     try {
         
-        let inflow = new In();
-        inflow.amount = req.body.amount
-        inflow.description = req.body.description
-        inflow.date = req.body.date
-        inflow.user = req.user._id
+        let inflow = new In(req.body);
+        // inflow.amount = req.body.amount
+        // inflow.postnet = req.body.postnet
+        // inflow.description = req.body.description
+        // inflow.date = req.body.date
+        // inflow.user = req.user._id
         await inflow.save()
         res.status(200).send({message:"Ingreso registrado correctamente"})
     } catch (error) {
@@ -98,6 +99,15 @@ async function responseTotal(req,res,next){
         const total = await calculateTotal(req)
         console.log("Total",total)
         res.status(200).send({total})
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+}
+async function getTotalPostnet(req,res,next){
+    try {
+        const totalPostnet = await calculateTotalP(req)
+        res.status(200).send({total:totalPostnet})
     } catch (error) {
         console.log(error)
         next(error)
@@ -214,11 +224,26 @@ async function calculateTotal(req){
     }
 
 }
+async function calculateTotalP(req){
+    const ins = await In.find({$and:[{user: req.user._id},{postnet:{$exists:true}}]})
+    console.log("ingresos posnet",ins)
+    let totalINP = 0
+   
+    if(Object.keys(ins).length > 0) {
+        for(element of ins){
+            totalINP += element.amount
+        }
+         return totalINP
+    
+}
+
+}
 module.exports = {
     addInflow,
     addOutFlow,
     getIN,
     getOUT,
+    getTotalPostnet,
     responseTotalMonth,
     responseTotal,
     totalDay,

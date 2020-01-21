@@ -4,6 +4,7 @@ const Flows = require('../Controllers/InOutFlowCtrl')
 
 api.post('/in',Flows.addInflow)
 api.get('/in',Flows.getIN)
+api.get('/in/postnet',Flows.getTotalPostnet)
 api.get('/out',Flows.getOUT)
 api.post('/out',Flows.addOutFlow)
 api.get('/total',Flows.responseTotal)

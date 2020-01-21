@@ -41,6 +41,7 @@ async function addPricize(req,res){
         pricize.loadprice = req.body.loadprice
         pricize.loadprice2 = req.body.loadprice2
         pricize.hhourprice = req.body.hhourprice
+        pricize.comision = req.body.comision
         pricize.user = req.user._id
         const pricizeStoraged = await pricize.save()
         res.status(200).send({pricize:pricizeStoraged})
@@ -49,6 +50,18 @@ async function addPricize(req,res){
 
         res.status(500).send(`Error al guardar precios y tamaños ${err}`)
     }
+}
+async function getComision(req,res){
+    try {
+        const comision = await comision.findById(req.params.idPricize)
+        if(Object.keys(comision).length === 0)
+            return res.status(404).send({message:'No se encontraron comision'}); 
+
+        res.status(200).send({comision})     
+    } catch (err) {
+        res.status(500).send(`${err}`);
+    }
+   
 }
 
 async function updatePricize(req, res){
@@ -165,6 +178,7 @@ module.exports = {
     getPricize,
     getPricizes,
     addPricize,
+    getComision,
     updatePricize,
     getSize,
     getSizes,
