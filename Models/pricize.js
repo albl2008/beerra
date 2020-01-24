@@ -9,6 +9,7 @@ const pricizeSchema = new Schema({
     loadprice:Number,
     loadprice2:Number,
     hhourprice:Number,
+    mpcomision:Number,
     user: {
         type: Schema.Types.ObjectId,
         ref: 'user1'

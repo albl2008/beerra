@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 
 const inflowSchema = new Schema({
     amount: Number,
+    postnet: Boolean,
     description: String,
     date: Date,
     sale: {

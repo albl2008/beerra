@@ -6,6 +6,7 @@ const pricizeCtrl = require('../Controllers/pricizeCtrl')
 api.post('/price',pricizeCtrl.addPricize);
 api.get('/price',pricizeCtrl.getPricizes);
 api.get('/price/:idPricize',pricizeCtrl.getPricize);
+api.get('/price/comision',pricizeCtrl.getComision);
 api.put('/price/:idPricize',pricizeCtrl.updatePricize);
 
 api.post('/size',pricizeCtrl.addSize);

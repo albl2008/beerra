@@ -36,6 +36,7 @@ const saleSchema = new Schema({
         ref:'containerSale'
     }],
     date:Date,
+    postnet: Boolean,
     totalSale:Number,
     user: {
         type: Schema.Types.ObjectId,
